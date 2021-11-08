@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Сonfectionery.Domain.Aggregates.PieAggregate
 {
@@ -7,7 +9,11 @@ namespace Сonfectionery.Domain.Aggregates.PieAggregate
         private Guid _id;
         private string _name;
         private string _description;
-        public Portions Portions;
+    
+        public Portions Portions { get; private set; }
+
+        private readonly List<Ingredient> _ingredients;
+        public IReadOnlyCollection<Ingredient> Ingredients => _ingredients;
 
         private Pie()
         {
@@ -38,6 +44,27 @@ namespace Сonfectionery.Domain.Aggregates.PieAggregate
                 _description = description,
                 Portions = portions
             };
+        }
+
+        public void UpdateIngredients(IEnumerable<Ingredient> ingredients)
+        {
+            if (ingredients == null)
+            {
+                throw new ArgumentNullException(nameof(ingredients));
+            }
+
+            if (!ingredients.Any())
+            {
+                throw new ArgumentException("Must specified at least one ingredient", nameof(ingredients));
+            }
+
+            if (ingredients.Sum(x => x.RelativeAmount) != 1.0)
+            {
+                throw new ArgumentException("The relarive amount of all ingredients combined must add up to 1.0");
+            }
+
+            _ingredients.Clear();
+            _ingredients.AddRange(ingredients);
         }
     }
 }
