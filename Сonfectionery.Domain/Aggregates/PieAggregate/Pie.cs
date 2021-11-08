@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Сonfectionery.Domain.Seedwork;
 
 namespace Сonfectionery.Domain.Aggregates.PieAggregate
 {
-    public class Pie
+    public class Pie : IAggregateRoot
     {
         private Guid _id;
         private string _name;
