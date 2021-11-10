@@ -1,10 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Сonfectionery.Domain.Seedwork;
 
 namespace Сonfectionery.Domain.Aggregates.OrderAggregate
 {
-    interface IOrderRepository
+    public interface IOrderRepository : IRepository<Order>
     {
+        Task<IEnumerable<Order>> GetAllAsync();
+
+        Task<Order> GetAsync(int pieId);
+
+        Task AddAsync(Order order);
     }
 }

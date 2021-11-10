@@ -8,11 +8,9 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Pie> builder)
         {
-            builder
-                .Property(x => x.Id)
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("Id")
-                .Required();
+            builder.ToTable("Pies", СonfectioneryContext.DEFAULT_SCHEMA);
+
+            builder.HasKey(o => o.Id);
 
             builder
                 .Property(x => x.Name)

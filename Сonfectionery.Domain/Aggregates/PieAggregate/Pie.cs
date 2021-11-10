@@ -5,7 +5,7 @@ using Сonfectionery.Domain.Seedwork;
 
 namespace Сonfectionery.Domain.Aggregates.PieAggregate
 {
-    public class Pie : IAggregateRoot
+    public class Pie : Entity, IAggregateRoot
     {
         private Guid _id;
         private string _name;
