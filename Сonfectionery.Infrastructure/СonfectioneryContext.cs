@@ -1,9 +1,11 @@
-﻿using Сonfectionery.Domain.Aggregates.OrderAggregate;
+﻿using Microsoft.EntityFrameworkCore;
+using Сonfectionery.Domain.Aggregates.OrderAggregate;
 using Сonfectionery.Domain.Aggregates.PieAggregate;
+using Сonfectionery.Infrastructure.EntityConfigurations;
 
 namespace Сonfectionery.Infrastructure
 {
-    public class СonfectioneryContext
+    public class СonfectioneryContext: DbContext
     {
         public const string DEFAULT_SCHEMA = "Сonfectionery";
 
@@ -12,9 +14,10 @@ namespace Сonfectionery.Infrastructure
         public DbSet<Pie> Pies { get; set; }
         public DbSet<Order> Orders { get; set; }
 
-        protected override void СonfectioneryContext(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration();
+            modelBuilder.ApplyConfiguration(new OrderEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new PieEntityTypeConfiguration());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Сonfectionery.Domain.Seedwork;
 
@@ -8,7 +9,7 @@ namespace Сonfectionery.Domain.Aggregates.PieAggregate
     {
         Task<IEnumerable<Pie>> GetAllAsync();
 
-        Task<Pie> GetAsync(int pieId);
+        Task<Pie> GetAsync(Guid pieId);
 
         Task AddAsync(Pie pie);
     }

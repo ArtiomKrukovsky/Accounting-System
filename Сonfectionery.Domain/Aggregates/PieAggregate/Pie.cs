@@ -7,7 +7,6 @@ namespace Сonfectionery.Domain.Aggregates.PieAggregate
 {
     public class Pie : Entity, IAggregateRoot
     {
-        private Guid _id;
         private string _name;
         private string _description;
     
@@ -40,7 +39,7 @@ namespace Сonfectionery.Domain.Aggregates.PieAggregate
 
             return new Pie
             {
-                _id = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 _name = name,
                 _description = description,
                 Portions = portions

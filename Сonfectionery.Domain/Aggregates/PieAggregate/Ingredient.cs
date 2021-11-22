@@ -2,7 +2,7 @@
 
 namespace Сonfectionery.Domain.Aggregates.PieAggregate
 {
-    public class Ingredient // record
+    public record Ingredient
     {
         public string Name { get; private set; }
         public bool IsAllergen { get; private set; }
@@ -11,7 +11,7 @@ namespace Сonfectionery.Domain.Aggregates.PieAggregate
         public Ingredient(string name, bool isAllergen, double relativeAmount)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
-            if (relativeAmount > 1.0 || relativeAmount <= 0.0) throw new ArgumentOutOfRangeException(nameof(relativeAmount));
+            if (relativeAmount is > 1.0 or <= 0.0) throw new ArgumentOutOfRangeException(nameof(relativeAmount));
 
             Name = name;
             IsAllergen = isAllergen;

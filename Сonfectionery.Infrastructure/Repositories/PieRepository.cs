@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Сonfectionery.Domain.Aggregates.PieAggregate;
 
 namespace Сonfectionery.Infrastructure.Repositories
@@ -19,15 +20,15 @@ namespace Сonfectionery.Infrastructure.Repositories
             return await _context.Pies
                 .Include(x => x.Portions).AsSingleQuery()
                 .Include(x => x.Ingredients).AsSingleQuery()
-                .ToList();
+                .ToListAsync();
         }
 
-        public async Task<Pie> GetAsync(int pieId)
+        public async Task<Pie> GetAsync(Guid pieId)
         {
             return await _context.Pies
                 .Include(x => x.Portions).AsSingleQuery()
                 .Include(x => x.Ingredients).AsSingleQuery()
-                .FirstOrDefault(x => x.Id == pieId);
+                .FirstOrDefaultAsync(x => x.Id == pieId);
         }
 
         public async Task AddAsync(Pie pie)

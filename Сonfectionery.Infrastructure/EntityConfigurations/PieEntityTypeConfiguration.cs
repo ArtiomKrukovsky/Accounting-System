@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Сonfectionery.Domain.Aggregates.PieAggregate;
 
 namespace Сonfectionery.Infrastructure.EntityConfigurations
 {
@@ -12,22 +12,26 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
 
             builder.HasKey(o => o.Id);
 
-            builder
-                .Property(x => x.Name)
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("Name")
-                .Required();
+            builder.Property(o => o.Id)
+                .UseHiLo("orderseq", СonfectioneryContext.DEFAULT_SCHEMA);
 
             builder
-                .Property(x => x.Description)
+                .Property<string>("_name")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("Name")
+                .IsRequired();
+
+            builder
+                .Property<string>("_description")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("Description")
-                .Required();
+                .IsRequired();
 
             builder.OwnsOne(x => x.Portions);
 
             var ingridientsConfiguration = builder.OwnsMany(x => x.Ingredients);
-            ingridientsConfiguration.SetPropertyAccessMode(PropertyAccessMode.Field);
+            builder.Navigation(x => x.Ingredients).Metadata.SetField("_ingredients");
+            builder.Navigation(x => x.Ingredients).UsePropertyAccessMode(PropertyAccessMode.Field);
 
             ingridientsConfiguration.Property(x => x.Name).HasMaxLength(250).IsRequired();
         }

@@ -33,7 +33,7 @@ namespace Сonfectionery.Domain.Seedwork
             if (otherValue == null)
                 return false;
 
-            var typeMatches = GetType().Equals(obj.GetType());
+            var typeMatches = GetType() == obj.GetType();
             var valueMatches = Id.Equals(otherValue.Id);
 
             return typeMatches && valueMatches;

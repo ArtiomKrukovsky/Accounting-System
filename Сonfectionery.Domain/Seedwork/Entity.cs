@@ -5,23 +5,12 @@ namespace Сonfectionery.Domain.Seedwork
     public abstract class Entity
     {
         int? _requestedHashCode;
-        int _Id;
 
-        public virtual int Id
-        {
-            get
-            {
-                return _Id;
-            }
-            protected set
-            {
-                _Id = value;
-            }
-        }
+        public virtual Guid Id { get; protected set; }
 
         public bool IsTransient()
         {
-            return this.Id == default(Int32);
+            return this.Id == default;
         }
 
         public override bool Equals(object obj)
@@ -35,7 +24,7 @@ namespace Сonfectionery.Domain.Seedwork
             if (this.GetType() != obj.GetType())
                 return false;
 
-            Entity item = (Entity)obj;
+            var item = (Entity)obj;
 
             if (item.IsTransient() || this.IsTransient())
                 return false;

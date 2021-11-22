@@ -2,7 +2,7 @@
 
 namespace Сonfectionery.Domain.Aggregates.PieAggregate
 {
-    public class Portions // record
+    public record Portions
     {
         public int Minimum { get; private set; }
         public int Maximum { get; private set; }
