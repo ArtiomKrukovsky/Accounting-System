@@ -29,11 +29,11 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
 
             builder.OwnsOne(x => x.Portions);
 
-            var ingridientsConfiguration = builder.OwnsMany(x => x.Ingredients);
+            var ingredientsConfiguration = builder.OwnsMany(x => x.Ingredients);
             builder.Navigation(x => x.Ingredients).Metadata.SetField("_ingredients");
             builder.Navigation(x => x.Ingredients).UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            ingridientsConfiguration.Property(x => x.Name).HasMaxLength(250).IsRequired();
+            ingredientsConfiguration.Property(x => x.Name).HasMaxLength(250).IsRequired();
         }
     }
 }

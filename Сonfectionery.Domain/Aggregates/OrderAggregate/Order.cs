@@ -28,9 +28,19 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
             };
         }
 
-        public void AddOrderItem()
+        public void AddOrderItem(Guid pieId, decimal unitPrice, decimal discount, int units)
         {
+            var existingOrderForPie = _orderItems.Where(x => x.PieId).FirstOrDefault();
 
+            if (existingOrderForPie)
+            {
+                existingOrderForPie.AddUnits(units);
+            }
+            else
+            {
+                var orderItem = OrderItem.Create(pieId, unitPrice, discount, units);
+                _orderItems.Add(orderItem);
+            }
         }
     }
 }

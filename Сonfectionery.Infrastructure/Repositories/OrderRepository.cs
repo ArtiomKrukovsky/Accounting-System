@@ -16,17 +16,22 @@ namespace Сonfectionery.Infrastructure.Repositories
 
         public Task AddAsync(Order order)
         {
-            throw new NotImplementedException();
+            _context.Orders.AddAsync(order);
+            _context.Orders.SaveChangesAsync();
         }
 
         public Task<IEnumerable<Order>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return _context.Orders
+                .Include(x => x.OrderItems)
+                .ToListAsync();
         }
 
         public Task<Order> GetAsync(int pieId)
         {
-            throw new NotImplementedException();
+            return _context.Orders
+                .Include(x => x.OrderItems)
+                .FirstOrDefaultAsync();
         }
     }
 }

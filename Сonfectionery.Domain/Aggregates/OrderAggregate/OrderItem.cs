@@ -37,5 +37,30 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
                 _discount = discount
             };
         }
+
+        public AddDiscount(decimal discount)
+        {
+            if (discount < 0)
+            {
+                throw new ArgumentException("Invalid discount");
+            }
+
+            if ((unitPrice * units) < discount)
+            {
+                throw new ArgumentException("The total of order item is lower than applied discount");
+            }
+
+            _discount = discount;
+        }
+
+        public AddUnits(int units)
+        {
+            if (units < 0)
+            {
+                throw new ArgumentException("Invalid units");
+            }
+
+            _units += units;
+        }
     }
 }
