@@ -38,14 +38,14 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
             };
         }
 
-        public AddDiscount(decimal discount)
+        public void AddDiscount(decimal discount)
         {
             if (discount < 0)
             {
                 throw new ArgumentException("Invalid discount");
             }
 
-            if ((unitPrice * units) < discount)
+            if ((_unitPrice * _units) < discount)
             {
                 throw new ArgumentException("The total of order item is lower than applied discount");
             }
@@ -53,7 +53,7 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
             _discount = discount;
         }
 
-        public AddUnits(int units)
+        public void AddUnits(int units)
         {
             if (units < 0)
             {

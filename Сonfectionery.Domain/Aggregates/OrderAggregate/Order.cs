@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Сonfectionery.Domain.Seedwork;
 
 namespace Сonfectionery.Domain.Aggregates.OrderAggregate
@@ -30,9 +31,9 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
 
         public void AddOrderItem(Guid pieId, decimal unitPrice, decimal discount, int units)
         {
-            var existingOrderForPie = _orderItems.Where(x => x.PieId).FirstOrDefault();
+            var existingOrderForPie = _orderItems.FirstOrDefault(x => x.PieId == pieId);
 
-            if (existingOrderForPie)
+            if (existingOrderForPie != null)
             {
                 existingOrderForPie.AddUnits(units);
             }

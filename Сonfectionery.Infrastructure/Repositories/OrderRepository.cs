@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Сonfectionery.Domain.Aggregates.OrderAggregate;
 
 namespace Сonfectionery.Infrastructure.Repositories
@@ -14,22 +15,22 @@ namespace Сonfectionery.Infrastructure.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public Task AddAsync(Order order)
+        public async Task AddAsync(Order order)
         {
-            _context.Orders.AddAsync(order);
-            _context.Orders.SaveChangesAsync();
+            await _context.Orders.AddAsync(order);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<IEnumerable<Order>> GetAllAsync()
+        public async Task<IEnumerable<Order>> GetAllAsync()
         {
-            return _context.Orders
+            return await _context.Orders
                 .Include(x => x.OrderItems)
                 .ToListAsync();
         }
 
-        public Task<Order> GetAsync(int pieId)
+        public async Task<Order> GetAsync(int pieId)
         {
-            return _context.Orders
+            return await _context.Orders
                 .Include(x => x.OrderItems)
                 .FirstOrDefaultAsync();
         }

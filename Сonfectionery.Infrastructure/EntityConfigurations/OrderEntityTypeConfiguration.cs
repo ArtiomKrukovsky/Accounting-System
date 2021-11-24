@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using Сonfectionery.Domain.Aggregates.OrderAggregate;
 
 namespace Сonfectionery.Infrastructure.EntityConfigurations
@@ -16,15 +17,15 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
                 .UseHiLo("orderseq", СonfectioneryContext.DEFAULT_SCHEMA);
 
             builder
-                .Property<DataTime>("_orderDate")
+                .Property<DateTime>("_orderDate")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("OrderDate")
                 .IsRequired();
 
             builder
-                .Property<DataTime>("_orderStatusId")
+                .Property<DateTime>("_orderStatusId")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("OrderDate")
+                .HasColumnName("OrderStatusId")
                 .IsRequired();
 
             builder.Navigation(x => x.OrderItems).Metadata.SetField("_orderItems");

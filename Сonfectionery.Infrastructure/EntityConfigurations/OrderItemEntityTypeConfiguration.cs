@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Сonfectionery.Domain.Aggregates.OrderAggregate;
+using Сonfectionery.Domain.Aggregates.PieAggregate;
 
 namespace Сonfectionery.Infrastructure.EntityConfigurations
 {
     public class OrderItemEntityTypeConfiguration : IEntityTypeConfiguration<OrderItem>
     {
-        public void Configure(EntityTypeBuilder<Order> builder)
+        public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
             builder.ToTable("OrderItems", СonfectioneryContext.DEFAULT_SCHEMA);
 
@@ -17,7 +17,7 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
             builder.Property(o => o.Id)
                 .UseHiLo("orderseq", СonfectioneryContext.DEFAULT_SCHEMA);
 
-            orderItemConfiguration.Property<Guid>("PieId")
+            builder.Property<Guid>("PieId")
                 .IsRequired();
 
             builder
@@ -37,6 +37,10 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("Units")
                 .IsRequired();
+
+            builder.HasOne<Pie>()
+                .WithMany()
+                .HasForeignKey(x => x.PieId);
         }
     }
 }
