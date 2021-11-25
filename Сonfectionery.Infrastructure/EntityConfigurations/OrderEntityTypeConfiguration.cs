@@ -17,6 +17,12 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
                 .UseHiLo("orderseq", СonfectioneryContext.DEFAULT_SCHEMA);
 
             builder
+                .Property<DateTime>("_title")
+                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .HasColumnName("Title")
+                .IsRequired();
+
+            builder
                 .Property<DateTime>("_orderDate")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("OrderDate")
