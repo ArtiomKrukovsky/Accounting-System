@@ -1,4 +1,16 @@
-﻿using Сonfectionery.API.Application.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
+using FluentValidation;
+using MapsterMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
+using Сonfectionery.API.Application.DTOs;
+using Сonfectionery.API.Application.Interfaces;
+using Сonfectionery.Domain.Aggregates.PieAggregate;
 
 namespace Сonfectionery.API.Application.Commands
 {
@@ -12,58 +24,68 @@ namespace Сonfectionery.API.Application.Commands
         public string Description { get; set; }
 
         [DataMember]
-        public IEnumerable<IngredientDto> Ingredients { get; set; }
+        public PortionsDto Portions { get; set; }
 
         [DataMember]
-        public IEnumerable<PortionDto> Portions { get; set; }
+        public IEnumerable<IngredientDto> Ingredients { get; set; }
 
-        public CreatePieCommand(string name, string description, IEnumerable<IngredientDto> ingredients, 
-            IEnumerable<PortionDto> portions)
+        public CreatePieCommand(string name, string description, PortionsDto portions,
+            IEnumerable<IngredientDto> ingredients)
         {
             Name = name;
             Description = description;
-            Ingredients = ingredients;
             Portions = portions;
+            Ingredients = ingredients;
         }
     }
 
-    public class CreatePieCommandValidation : IAbstractValidator<CreatePieCommand>
+    public class CreatePieCommandValidation : AbstractValidator<CreatePieCommand>
     {
         public CreatePieCommandValidation()
         {
             RuleFor(command => command.Name).NotEmpty();
             RuleFor(command => command.Description).NotEmpty();
             RuleFor(command => command.Ingredients).Must(ContainIngredients).WithMessage("No ingredients found");
-            RuleFor(command => command.Portions).Must(ContainPortions).WithMessage("No portions found");
+            RuleFor(command => command.Portions).NotNull().Must(BeValidPortions).WithMessage("Invalid portion values");
         }
 
-        private bool ContainIngredients(IEnumerable<IngredientDto> ingredients)
+        private static bool ContainIngredients(IEnumerable<IngredientDto> ingredients)
         {
-            return orderItems.Any();
+            return ingredients.Any();
         }
 
-        private bool ContainPortions(IEnumerable<PortionDto> portions)
+        private static bool BeValidPortions(PortionsDto portions)
         {
-            return orderItems.Any();
+            return portions.Maximum > 0 && portions.Minimum > 0 && portions.Minimum < portions.Maximum;
         }
     }
 
     public class CreatePieCommandHandler : IRequestHandler<CreatePieCommand, bool>
     {
-        private IPieRepository _pieRepository;
-        private ILogger<CreatePieCommand> _logger;
+        private readonly IPieRepository _pieRepository;
+        private readonly IMapper _mapper;
+        private readonly ILogger<CreatePieCommand> _logger;
 
-        public CreatePieCommandHandler(IPieRepository pieRepository, ILogger<CreatePieCommand> logger)
+        public CreatePieCommandHandler(IPieRepository pieRepository, IMapper mapper, ILogger<CreatePieCommand> logger)
         {
             _pieRepository = pieRepository ?? throw new ArgumentNullException(nameof(pieRepository));
+            _mapper = mapper;
             _logger = logger;
         }
 
         public async Task<bool> Handle(CreatePieCommand request, CancellationToken cancellationToken)
         {
-            var pie = Pie.Create();
+            var portions = _mapper.Map<Portions>(request.Portions);
+            var pie = Pie.Create(request.Name, request.Description, portions);
 
-            _pieRepository.AddAsync(pie);
+            var ingredients = _mapper.Map<IEnumerable<Ingredient>>(request.Ingredients);
+            pie.UpdateIngredients(ingredients);
+
+            _logger.LogInformation("----- Creating Pie - Pie: {@Pie}", pie);
+
+            await _pieRepository.AddAsync(pie);
+
+            return true;
         }
     }
 }
