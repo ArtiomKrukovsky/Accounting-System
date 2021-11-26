@@ -21,18 +21,18 @@ namespace Сonfectionery.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<Order> GetAsync(Guid orderId)
+        {
+            return await _context.Orders
+                .Include(x => x.OrderItems).AsSingleQuery()
+                .FirstOrDefaultAsync(x => x.Id == orderId);
+        }
+
         public async Task<IEnumerable<Order>> GetAllAsync()
         {
             return await _context.Orders
-                .Include(x => x.OrderItems)
+                .Include(x => x.OrderItems).AsSingleQuery()
                 .ToListAsync();
-        }
-
-        public async Task<Order> GetAsync(int pieId)
-        {
-            return await _context.Orders
-                .Include(x => x.OrderItems)
-                .FirstOrDefaultAsync();
         }
     }
 }

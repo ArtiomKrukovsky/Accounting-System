@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Сonfectionery.Domain.Seedwork;
 
@@ -8,7 +9,7 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
     {
         Task<IEnumerable<Order>> GetAllAsync();
 
-        Task<Order> GetAsync(int pieId);
+        Task<Order> GetAsync(Guid orderId);
 
         Task AddAsync(Order order);
     }
