@@ -15,6 +15,11 @@ namespace Сonfectionery.API.Application.Queries
     {
         [DataMember]
         public Guid OrderId { get; set; }
+
+        public GetOrderQuery(Guid orderId)
+        {
+            OrderId = orderId;
+        }
     }
 
     public class GetOrderQueryHandler : IRequestHandler<GetOrderQuery, OrderViewModel>

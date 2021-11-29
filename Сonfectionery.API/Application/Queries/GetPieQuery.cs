@@ -15,6 +15,11 @@ namespace Сonfectionery.API.Application.Queries
     {
         [DataMember]
         public Guid PieId { get; set; }
+
+        public GetPieQuery(Guid pieId)
+        {
+            PieId = pieId;
+        }
     }
 
     public class GetPieQueryHandler : IRequestHandler<GetPieQuery, PieViewModel>
