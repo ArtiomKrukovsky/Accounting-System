@@ -17,6 +17,9 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
             builder.Property(o => o.Id)
                 .UseHiLo("orderseq", СonfectioneryContext.DEFAULT_SCHEMA);
 
+            builder.Property<Guid>("OrderId")
+                .IsRequired();
+
             builder.Property<Guid>("PieId")
                 .IsRequired();
 

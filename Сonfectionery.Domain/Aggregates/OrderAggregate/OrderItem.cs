@@ -6,12 +6,13 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
     public class OrderItem : Entity
     {
         public Guid PieId { get; private set; }
+        public Guid OrderId { get; private set; }
 
         private decimal _unitPrice;
         private decimal _discount;
         private int _units;
 
-        private decimal totalPrice => _units * _unitPrice;
+        private decimal _totalPrice => _units * _unitPrice;
 
         private OrderItem()
         {
