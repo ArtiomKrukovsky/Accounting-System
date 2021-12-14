@@ -10,12 +10,9 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
-            builder.ToTable("OrderItems", СonfectioneryContext.DEFAULT_SCHEMA);
+            builder.ToTable("OrderItem");
 
-            builder.HasKey(o => o.Id);
-
-            builder.Property(o => o.Id)
-                .UseHiLo("orderseq", СonfectioneryContext.DEFAULT_SCHEMA);
+            builder.HasKey(o => o.Id).HasName("PK_OrderItem");
 
             builder.Property<Guid>("OrderId")
                 .IsRequired();

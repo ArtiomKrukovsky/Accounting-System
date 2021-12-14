@@ -9,15 +9,12 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Order> builder)
         {
-            builder.ToTable("Orders", СonfectioneryContext.DEFAULT_SCHEMA);
+            builder.ToTable("Order");
 
-            builder.HasKey(o => o.Id);
-
-            builder.Property(o => o.Id)
-                .UseHiLo("orderseq", СonfectioneryContext.DEFAULT_SCHEMA);
+            builder.HasKey(o => o.Id).HasName("PK_Order");
 
             builder
-                .Property<DateTime>("_title")
+                .Property<string>("_title")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("Title")
                 .IsRequired();
@@ -29,7 +26,7 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
                 .IsRequired();
 
             builder
-                .Property<DateTime>("_orderStatusId")
+                .Property<int>("_orderStatusId")
                 .UsePropertyAccessMode(PropertyAccessMode.Field)
                 .HasColumnName("OrderStatusId")
                 .IsRequired();

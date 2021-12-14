@@ -7,8 +7,6 @@ namespace Сonfectionery.Infrastructure
 {
     public class СonfectioneryContext: DbContext
     {
-        public const string DEFAULT_SCHEMA = "Сonfectionery";
-
         public СonfectioneryContext(DbContextOptions<СonfectioneryContext> options) : base(options) { }
 
         public DbSet<Pie> Pies { get; set; }
@@ -17,6 +15,8 @@ namespace Сonfectionery.Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new OrderEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderItemEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderStatusEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new PieEntityTypeConfiguration());
         }
     }

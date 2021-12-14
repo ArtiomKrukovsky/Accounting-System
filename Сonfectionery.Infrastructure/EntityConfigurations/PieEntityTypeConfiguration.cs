@@ -8,12 +8,9 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Pie> builder)
         {
-            builder.ToTable("Pies", СonfectioneryContext.DEFAULT_SCHEMA);
+            builder.ToTable("Pie");
 
-            builder.HasKey(o => o.Id);
-
-            builder.Property(o => o.Id)
-                .UseHiLo("orderseq", СonfectioneryContext.DEFAULT_SCHEMA);
+            builder.HasKey(o => o.Id).HasName("PK_Pie");
 
             builder
                 .Property<string>("_name")
