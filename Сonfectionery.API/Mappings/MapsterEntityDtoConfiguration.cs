@@ -4,6 +4,7 @@ using Сonfectionery.Domain.Aggregates.PieAggregate;
 
 namespace Сonfectionery.API.Mappings
 {
+    // Dto API <=> Entity models mappings
     public class MapsterEntityDtoConfiguration : IRegister
     {
         public void Register(TypeAdapterConfig config)

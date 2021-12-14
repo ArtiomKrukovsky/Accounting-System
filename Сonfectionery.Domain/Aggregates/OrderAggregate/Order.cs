@@ -19,7 +19,7 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
 
         private Order()
         {
-
+            _orderItems = new List<OrderItem>();
         }
 
         public static Order Create(string title)

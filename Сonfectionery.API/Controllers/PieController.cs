@@ -27,7 +27,7 @@ namespace Сonfectionery.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<bool>> PostPieAsync(CreatePieCommand createPieCommand)
+        public async Task<ActionResult<bool>> PostPieAsync([FromBody]CreatePieCommand createPieCommand)
         {
             return await _mediator.Send(createPieCommand);
         }

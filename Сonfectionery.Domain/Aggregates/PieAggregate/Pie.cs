@@ -7,9 +7,9 @@ namespace Сonfectionery.Domain.Aggregates.PieAggregate
 {
     public class Pie : Entity, IAggregateRoot
     {
-        private string _name;
-        private string _description;
-    
+        public string Name { get; private set; }
+        public string Description { get; private set; }
+
         public Portions Portions { get; private set; }
 
         private readonly List<Ingredient> _ingredients;
@@ -17,7 +17,7 @@ namespace Сonfectionery.Domain.Aggregates.PieAggregate
 
         private Pie()
         {
-
+            _ingredients = new List<Ingredient>();
         }
 
         public static Pie Create(string name, string description, Portions portions)
@@ -40,8 +40,8 @@ namespace Сonfectionery.Domain.Aggregates.PieAggregate
             return new Pie
             {
                 Id = Guid.NewGuid(),
-                _name = name,
-                _description = description,
+                Name = name,
+                Description = description,
                 Portions = portions
             };
         }

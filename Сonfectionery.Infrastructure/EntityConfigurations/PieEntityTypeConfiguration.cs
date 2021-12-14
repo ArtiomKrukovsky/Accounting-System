@@ -13,15 +13,11 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
             builder.HasKey(o => o.Id).HasName("PK_Pie");
 
             builder
-                .Property<string>("_name")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("Name")
+                .Property(x => x.Name)
                 .IsRequired();
 
             builder
-                .Property<string>("_description")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("Description")
+                .Property(x => x.Description)
                 .IsRequired();
 
             builder.OwnsOne(x => x.Portions);
