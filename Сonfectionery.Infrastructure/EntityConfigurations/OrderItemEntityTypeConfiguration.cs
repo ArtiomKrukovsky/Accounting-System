@@ -21,21 +21,15 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
                 .IsRequired();
 
             builder
-                .Property<decimal>("_unitPrice")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("UnitPrice")
+                .Property(x => x.UnitPrice)
                 .IsRequired();
 
             builder
-                .Property<decimal>("_discount")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("Discount")
+                .Property(x => x.Discount)
                 .IsRequired();
 
             builder
-                .Property<int>("_units")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("Units")
+                .Property(x => x.Units)
                 .IsRequired();
 
             builder.HasOne<Pie>()

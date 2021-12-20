@@ -8,11 +8,11 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
         public Guid PieId { get; private set; }
         public Guid OrderId { get; private set; }
 
-        private decimal _unitPrice;
-        private decimal _discount;
-        private int _units;
+        public decimal UnitPrice { get; private set; }
+        public decimal Discount { get; private set; }
+        public int Units { get; private set; }
 
-        private decimal _totalPrice => _units * _unitPrice;
+        public decimal TotalPrice => Units * UnitPrice;
 
         private OrderItem()
         {
@@ -34,8 +34,9 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
             return new OrderItem
             {
                 PieId = pieId,
-                _unitPrice = unitPrice,
-                _discount = discount
+                UnitPrice = unitPrice,
+                Discount = discount,
+                Units = units
             };
         }
 
@@ -46,12 +47,12 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
                 throw new ArgumentException("Invalid discount");
             }
 
-            if ((_unitPrice * _units) < discount)
+            if ((UnitPrice * Units) < discount)
             {
                 throw new ArgumentException("The total of order item is lower than applied discount");
             }
 
-            _discount = discount;
+            Discount = discount;
         }
 
         public void AddUnits(int units)
@@ -61,7 +62,7 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
                 throw new ArgumentException("Invalid units");
             }
 
-            _units += units;
+            Units += units;
         }
     }
 }

@@ -14,15 +14,11 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
             builder.HasKey(o => o.Id).HasName("PK_Order");
 
             builder
-                .Property<string>("_title")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("Title")
+                .Property(x => x.Title)
                 .IsRequired();
 
             builder
-                .Property<DateTime>("_orderDate")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("OrderDate")
+                .Property(x => x.OrderDate)
                 .IsRequired();
 
             builder

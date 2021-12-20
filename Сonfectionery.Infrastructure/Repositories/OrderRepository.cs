@@ -25,6 +25,7 @@ namespace Сonfectionery.Infrastructure.Repositories
         {
             return await _context.Orders
                 .Include(x => x.OrderItems).AsSingleQuery()
+                .Include(x => x.OrderStatus).AsSingleQuery()
                 .FirstOrDefaultAsync(x => x.Id == orderId);
         }
 
@@ -32,6 +33,7 @@ namespace Сonfectionery.Infrastructure.Repositories
         {
             return await _context.Orders
                 .Include(x => x.OrderItems).AsSingleQuery()
+                .Include(x => x.OrderStatus).AsSingleQuery()
                 .ToListAsync();
         }
     }

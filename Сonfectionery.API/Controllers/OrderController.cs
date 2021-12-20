@@ -34,7 +34,7 @@ namespace Сonfectionery.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<bool>> PostOrderAsync(CreateOrderCommand createOrderCommand)
+        public async Task<ActionResult<bool>> PostOrderAsync([FromBody]CreateOrderCommand createOrderCommand)
         {
             return await _mediator.Send(createOrderCommand);
         }

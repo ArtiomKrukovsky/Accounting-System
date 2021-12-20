@@ -7,9 +7,8 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
 {
     public class Order : Entity, IAggregateRoot
     {
-        private string _title;
-
-        private DateTime _orderDate;
+        public string Title { get; private set; }
+        public DateTime OrderDate { get; private set; }
 
         private int _orderStatusId;
         public OrderStatus OrderStatus { get; private set; }
@@ -26,9 +25,9 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
         {
             return new Order
             {
-                _title = title,
+                Title = title,
                 _orderStatusId = OrderStatus.Submitted.Id,
-                _orderDate = DateTime.UtcNow
+                OrderDate = DateTime.UtcNow
             };
         }
 

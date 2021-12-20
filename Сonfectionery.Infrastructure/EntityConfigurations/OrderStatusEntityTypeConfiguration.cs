@@ -20,6 +20,12 @@ namespace Сonfectionery.Infrastructure.EntityConfigurations
             builder.Property(o => o.Name)
                 .HasMaxLength(200)
                 .IsRequired();
+
+            builder.HasData(OrderStatus.Submitted,
+                OrderStatus.Paid,
+                OrderStatus.Cooking,
+                OrderStatus.Shipping,
+                OrderStatus.Cancelled);
         }
     }
 }
