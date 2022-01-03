@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Сonfectionery.API.Application.DTOs;
 using Сonfectionery.API.Application.Interfaces;
 using Сonfectionery.Domain.Aggregates.OrderAggregate;
+using Сonfectionery.Services.Kafka;
 
 namespace Сonfectionery.API.Application.Commands
 {
@@ -46,11 +47,16 @@ namespace Сonfectionery.API.Application.Commands
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
     {
         private readonly IOrderRepository _orderRepository;
+        private readonly IKafkaMessageBus<string, Order> _messageBus;
         private readonly ILogger<CreateOrderCommandHandler> _logger;
 
-        public CreateOrderCommandHandler(IOrderRepository orderRepository, ILogger<CreateOrderCommandHandler> logger)
+        public CreateOrderCommandHandler(
+            IOrderRepository orderRepository, 
+            IKafkaMessageBus<string, Order> messageBus, 
+            ILogger<CreateOrderCommandHandler> logger)
         {
             _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
+            _messageBus = messageBus ?? throw new ArgumentNullException(nameof(messageBus));
             _logger = logger;
         }
 
@@ -66,6 +72,8 @@ namespace Сonfectionery.API.Application.Commands
             _logger.LogInformation("----- Creating Order - Order: {@Order}", order);
 
             await _orderRepository.AddAsync(order);
+
+            await _messageBus.PublishAsync("order", order);
 
             return true;
         }

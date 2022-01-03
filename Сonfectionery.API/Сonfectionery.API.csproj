@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Сonfectionery.Domain\Сonfectionery.Domain.csproj" />
     <ProjectReference Include="..\Сonfectionery.Infrastructure\Сonfectionery.Infrastructure.csproj" />
+    <ProjectReference Include="..\Сonfectionery.Services\Сonfectionery.Services.csproj" />
   </ItemGroup>
 
 </Project>

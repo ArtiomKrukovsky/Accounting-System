@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Сonfectionery.API.Application.Behaviors;
 using Сonfectionery.API.Extensions;
+using Сonfectionery.Services;
 
 namespace Сonfectionery.API
 {
@@ -30,6 +31,9 @@ namespace Сonfectionery.API
 
             // Configure DB
             services.AddCustomDbContext(Configuration);
+
+            // Configure Kafka
+            services.AddKafkaMessageBus();
 
             // Configure Mapster
             var config = new TypeAdapterConfig { RequireExplicitMapping = true };
