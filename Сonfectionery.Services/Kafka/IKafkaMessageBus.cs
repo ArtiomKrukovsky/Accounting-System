@@ -2,7 +2,7 @@
 
 namespace Сonfectionery.Services.Kafka
 {
-    public interface IKafkaMessageBus<TKey, TValue>
+    public interface IKafkaMessageBus<in TKey, in TValue> where TValue : class
     {
         Task PublishAsync(TKey key, TValue message);
     }

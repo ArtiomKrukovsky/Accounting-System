@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Confluent.Kafka;
+using Microsoft.Extensions.Options;
+using Сonfectionery.Services.Kafka.Serializers;
 
 namespace Сonfectionery.Services.Kafka.Producer
 {
@@ -9,10 +11,11 @@ namespace Сonfectionery.Services.Kafka.Producer
         private readonly IProducer<TKey, TValue> _producer;
         private readonly string _topic;
 
-        public KafkaProducerService(IProducer<TKey, TValue> producer, string topic)
+        public KafkaProducerService(IOptions<KafkaProducerConfig> config)
         {
-            _producer = producer;
-            _topic = topic;
+            _topic = config.Value.Topic;
+            _producer = new ProducerBuilder<TKey, TValue>(config.Value)
+                .SetValueSerializer(new KafkaSerializer<TValue>()).Build();
         }
 
         public async Task ProduceAsync(TKey key, TValue value)

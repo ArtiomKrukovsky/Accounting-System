@@ -3,7 +3,7 @@ using Сonfectionery.Services.Kafka.Producer;
 
 namespace Сonfectionery.Services.Kafka
 {
-    public class KafkaMessageBus<TKey, TValue> : IKafkaMessageBus<TKey, TValue>
+    public class KafkaMessageBus<TKey, TValue> : IKafkaMessageBus<TKey, TValue> where TValue : class
     {
         private readonly KafkaProducerService<TKey, TValue> _producer;
 

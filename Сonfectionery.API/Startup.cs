@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Сonfectionery.API.Application.Behaviors;
 using Сonfectionery.API.Extensions;
 using Сonfectionery.Services;
+using Сonfectionery.Services.Kafka.Producer;
 
 namespace Сonfectionery.API
 {
@@ -32,8 +33,17 @@ namespace Сonfectionery.API
             // Configure DB
             services.AddCustomDbContext(Configuration);
 
+            // Get kafka configuration
+            var kafkaConfig = new KafkaProducerConfig();
+            Configuration.Bind(KafkaProducerConfig.KafkaConfiguration, kafkaConfig);
+
             // Configure Kafka
             services.AddKafkaMessageBus();
+            services.AddKafkaProducer(p =>
+            {
+                p.Topic = kafkaConfig.Topic;
+                p.BootstrapServers = kafkaConfig.BootstrapServers;
+            });
 
             // Configure Mapster
             var config = new TypeAdapterConfig { RequireExplicitMapping = true };

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using Сonfectionery.API.Application.DTOs;
 using Сonfectionery.API.Application.Interfaces;
 using Сonfectionery.Domain.Aggregates.PieAggregate;
+using Сonfectionery.Services.Kafka;
 
 namespace Сonfectionery.API.Application.Commands
 {
@@ -63,12 +64,18 @@ namespace Сonfectionery.API.Application.Commands
     public class CreatePieCommandHandler : IRequestHandler<CreatePieCommand, bool>
     {
         private readonly IPieRepository _pieRepository;
+        private readonly IKafkaMessageBus<string, Pie> _messageBus;
         private readonly IMapper _mapper;
         private readonly ILogger<CreatePieCommand> _logger;
 
-        public CreatePieCommandHandler(IPieRepository pieRepository, IMapper mapper, ILogger<CreatePieCommand> logger)
+        public CreatePieCommandHandler(
+            IPieRepository pieRepository,
+            IKafkaMessageBus<string, Pie> messageBus,
+            IMapper mapper, 
+            ILogger<CreatePieCommand> logger)
         {
             _pieRepository = pieRepository ?? throw new ArgumentNullException(nameof(pieRepository));
+            _messageBus = messageBus ?? throw new ArgumentNullException(nameof(messageBus));
             _mapper = mapper;
             _logger = logger;
         }
@@ -84,6 +91,8 @@ namespace Сonfectionery.API.Application.Commands
             _logger.LogInformation("----- Creating Pie - Pie: {@Pie}", pie);
 
             await _pieRepository.AddAsync(pie);
+
+            await _messageBus.PublishAsync("pie", pie);
 
             return true;
         }
