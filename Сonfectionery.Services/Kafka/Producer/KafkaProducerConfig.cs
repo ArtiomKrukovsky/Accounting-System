@@ -4,7 +4,7 @@ namespace Сonfectionery.Services.Kafka.Producer
 {
     public class KafkaProducerConfig : ProducerConfig
     {
-        public static string KafkaConfiguration = "KafkaConfiguration";
+        public static string KafkaConfiguration = "Kafka";
 
         public string Topic { get; set; }
     }
