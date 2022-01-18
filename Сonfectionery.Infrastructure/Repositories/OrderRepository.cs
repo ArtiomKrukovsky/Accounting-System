@@ -15,10 +15,12 @@ namespace Сonfectionery.Infrastructure.Repositories
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task AddAsync(Order order)
+        public async Task<IEnumerable<Order>> GetAllAsync()
         {
-            await _context.Orders.AddAsync(order);
-            await _context.SaveChangesAsync();
+            return await _context.Orders
+                .Include(x => x.OrderItems).AsSingleQuery()
+                .Include(x => x.OrderStatus).AsSingleQuery()
+                .ToListAsync();
         }
 
         public async Task<Order> GetAsync(Guid orderId)
@@ -29,12 +31,12 @@ namespace Сonfectionery.Infrastructure.Repositories
                 .FirstOrDefaultAsync(x => x.Id == orderId);
         }
 
-        public async Task<IEnumerable<Order>> GetAllAsync()
+        public async Task<Order> AddAsync(Order order)
         {
-            return await _context.Orders
-                .Include(x => x.OrderItems).AsSingleQuery()
-                .Include(x => x.OrderStatus).AsSingleQuery()
-                .ToListAsync();
+            await _context.Orders.AddAsync(order);
+            await _context.SaveChangesAsync();
+
+            return order;
         }
     }
 }

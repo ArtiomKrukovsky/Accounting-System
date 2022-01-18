@@ -31,10 +31,12 @@ namespace Сonfectionery.Infrastructure.Repositories
                 .FirstOrDefaultAsync(x => x.Id == pieId);
         }
 
-        public async Task AddAsync(Pie pie)
+        public async Task<Pie> AddAsync(Pie pie)
         {
             await _context.Pies.AddAsync(pie);
             await _context.SaveChangesAsync();
+
+            return pie;
         }
     }
 }

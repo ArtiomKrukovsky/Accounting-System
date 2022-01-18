@@ -11,6 +11,6 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
 
         Task<Order> GetAsync(Guid orderId);
 
-        Task AddAsync(Order order);
+        Task<Order> AddAsync(Order order);
     }
 }

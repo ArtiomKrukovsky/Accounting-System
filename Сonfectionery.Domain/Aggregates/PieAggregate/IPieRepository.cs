@@ -11,6 +11,6 @@ namespace Сonfectionery.Domain.Aggregates.PieAggregate
 
         Task<Pie> GetAsync(Guid pieId);
 
-        Task AddAsync(Pie pie);
+        Task<Pie> AddAsync(Pie pie);
     }
 }
