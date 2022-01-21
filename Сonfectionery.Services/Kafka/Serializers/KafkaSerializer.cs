@@ -15,7 +15,12 @@ namespace Сonfectionery.Services.Kafka.Serializers
             if (typeof(T) == typeof(Ignore))
                 throw new NotSupportedException("Not Supported.");
 
-            var json = JsonConvert.SerializeObject(data);
+            var formatSettings = new JsonSerializerSettings
+            {
+                DateFormatString = "yyyy-MM-dd''T''HH:mm:ss.fff"
+            };
+
+            var json = JsonConvert.SerializeObject(data, formatSettings);
 
             return Encoding.UTF8.GetBytes(json);
         }
