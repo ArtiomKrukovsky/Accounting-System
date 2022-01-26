@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using ksqlDb.RestApi.Client.DependencyInjection;
+using ksqlDB.RestApi.Client.KSql.Query.Options;
 using Mapster;
 using MapsterMapper;
 using MediatR;
@@ -12,6 +14,7 @@ using Newtonsoft.Json;
 using Сonfectionery.API.Application.Behaviors;
 using Сonfectionery.API.Extensions;
 using Сonfectionery.Services;
+using Сonfectionery.Services.Kafka.Consumer;
 using Сonfectionery.Services.Kafka.Producer;
 
 namespace Сonfectionery.API
@@ -32,6 +35,27 @@ namespace Сonfectionery.API
 
             // Configure DB
             services.AddCustomDbContext(Configuration);
+
+            // Get KSqlDB configuration
+            var kSqlDbConfig = new KSqlDbConfig();
+            Configuration.Bind(KSqlDbConfig.KSqlDbConfiguration, kSqlDbConfig);
+
+            var ksqlDbUrl = @"http:\\localhost:8088";
+
+            // Configure KSqlDB
+            services.ConfigureKSqlDb(ksqlDbUrl, setupParameters =>
+            {
+                setupParameters.SetAutoOffsetReset(AutoOffsetReset.Earliest);
+                setupParameters.Options.ShouldPluralizeFromItemName = kSqlDbConfig.ShouldPluralizeFromItemName;
+            });
+
+            // Configure KSqlDB //todo: move into this service
+            services.AddKSqlDb(p =>
+            {
+                p.BaseUrl = kSqlDbConfig.BaseUrl;
+                p.Subscription = kSqlDbConfig.Subscription;
+                p.ShouldPluralizeFromItemName = kSqlDbConfig.ShouldPluralizeFromItemName;
+            });
 
             // Get kafka configuration
             var kafkaConfig = new KafkaProducerConfig();
