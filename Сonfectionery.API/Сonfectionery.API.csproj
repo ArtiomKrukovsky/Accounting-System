@@ -8,7 +8,6 @@
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="10.3.4" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.4" />
-    <PackageReference Include="ksqlDb.RestApi.Client" Version="1.5.0" />
     <PackageReference Include="Mapster" Version="7.2.0" />
     <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />

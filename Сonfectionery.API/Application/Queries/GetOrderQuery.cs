@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using ksqlDB.RestApi.Client.KSql.Linq.PullQueries;
 using ksqlDB.RestApi.Client.KSql.Query.Context;
-using MapsterMapper;
 using MediatR;
-using Newtonsoft.Json;
 using Сonfectionery.API.Application.Interfaces;
 using Сonfectionery.API.Application.ViewModels;
 
@@ -26,45 +25,23 @@ namespace Сonfectionery.API.Application.Queries
 
     public class GetOrderQueryHandler : IRequestHandler<GetOrderQuery, OrderViewModel>
     {
-        private readonly IKSqlDBContext _context;
-        private readonly IMapper _mapper;
+        private readonly IKSqlDBContext _kSqlDbContext;
 
-        public GetOrderQueryHandler(IKSqlDBContext context,
-            IMapper mapper)
+        public GetOrderQueryHandler(IKSqlDBContext kSqlDbContext)
         {
-            _context = context;
-            _mapper = mapper;
+            _kSqlDbContext = kSqlDbContext;
         }
 
         public async Task<OrderViewModel> Handle(GetOrderQuery request, CancellationToken cancellationToken)
         {
             const string tableName = "orders_view";
 
-            var enumerable = _context.CreatePullQuery<object>(tableName)
-                .GetManyAsync();
+            var order = await _kSqlDbContext.CreatePullQuery<OrderViewModel>(tableName)
+                .Where(x => x.Id == request.OrderId.ToString())
+                .GetManyAsync(cancellationToken)
+                .FirstOrDefaultAsync(cancellationToken);
 
-            var list = new List<OrderData>();
-
-            await foreach (var item in enumerable.ConfigureAwait(false))
-            {
-                list.Add(JsonConvert.DeserializeObject<OrderData>(item.ToString()));
-            }
-
-            return _mapper.Map<OrderViewModel>(new OrderViewModel());
-        }
-
-        public class OrderData
-        {
-            public string Id { get; set; }
-            public string Title { get; set; }
-            public string CreateOrder { get; set; }
-            public string Status { get; set; }
-            public string OrderItemId { get; set; }
-            public string PieId { get; set; }
-            public decimal UnitPrice { get; set; }
-            public decimal Units { get; set; }
-            public decimal TotalPrice { get; set; }
-            public decimal Discount { get; set; }
+            return order;
         }
     }
 }

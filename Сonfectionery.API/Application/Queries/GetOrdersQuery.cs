@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MapsterMapper;
+using ksqlDB.RestApi.Client.KSql.Query.Context;
 using MediatR;
 using Сonfectionery.API.Application.Interfaces;
 using Сonfectionery.API.Application.ViewModels;
-using Сonfectionery.Domain.Aggregates.OrderAggregate;
 
 namespace Сonfectionery.API.Application.Queries
 {
@@ -14,20 +14,22 @@ namespace Сonfectionery.API.Application.Queries
 
     public class GetOrdersQueryHandler : IRequestHandler<GetOrdersQuery, IEnumerable<OrderViewModel>>
     {
-        private readonly IOrderRepository _orderRepository;
-        private readonly IMapper _mapper;
+        private readonly IKSqlDBContext _kSqlDbContext;
 
-        public GetOrdersQueryHandler(IOrderRepository orderRepository, IMapper mapper)
+        public GetOrdersQueryHandler(IKSqlDBContext kSqlDbContext)
         {
-            _orderRepository = orderRepository;
-            _mapper = mapper;
+            _kSqlDbContext = kSqlDbContext;
         }
 
         public async Task<IEnumerable<OrderViewModel>> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
         {
-            var orders = await _orderRepository.GetAllAsync();
+            const string tableName = "orders_view";
 
-            return _mapper.Map<IEnumerable<OrderViewModel>>(orders);
+            var orders = await _kSqlDbContext.CreatePullQuery<OrderViewModel>(tableName)
+                .GetManyAsync(cancellationToken)
+                .ToListAsync(cancellationToken);
+
+            return orders;
         }
     }
 }

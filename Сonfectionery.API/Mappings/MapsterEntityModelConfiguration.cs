@@ -30,12 +30,12 @@ namespace Сonfectionery.API.Mappings
                 .Map(d => d.Discount, s => s.Discount)
                 .Map(d => d.Units, s => s.Units)
                 .Map(d => d.TotalPrice, s => s.TotalPrice);
-            config.NewConfig<Order, OrderViewModel>()
-                .Map(d => d.Id, s => s.Id)
-                .Map(d => d.Title, s => s.Title)
-                .Map(d => d.OrderCreated, s => s.OrderDate)
-                .Map(d => d.OrderStatus, s => s.OrderStatus.Name)
-                .Map(d => d.OrderItems, s => s.OrderItems);
+            //config.NewConfig<Order, OrderViewModel>()
+            //    .Map(d => d.Id, s => s.Id)
+            //    .Map(d => d.Title, s => s.Title)
+            //    .Map(d => d.OrderCreated, s => s.OrderDate)
+            //    .Map(d => d.OrderStatus, s => s.OrderStatus.Name)
+            //    .Map(d => d.OrderItems, s => s.OrderItems);
         }
     }
 }

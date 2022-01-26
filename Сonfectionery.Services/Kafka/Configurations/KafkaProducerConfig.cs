@@ -1,6 +1,6 @@
 ﻿using Confluent.Kafka;
 
-namespace Сonfectionery.Services.Kafka.Producer
+namespace Сonfectionery.Services.Kafka.Configurations
 {
     public class KafkaProducerConfig : ProducerConfig
     {

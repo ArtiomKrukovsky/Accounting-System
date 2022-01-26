@@ -1,7 +1,9 @@
 ﻿using System;
+using ksqlDb.RestApi.Client.DependencyInjection;
+using ksqlDB.RestApi.Client.KSql.Query.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Сonfectionery.Services.Kafka;
-using Сonfectionery.Services.Kafka.Consumer;
+using Сonfectionery.Services.Kafka.Configurations;
 using Сonfectionery.Services.Kafka.Producer;
 
 namespace Сonfectionery.Services
@@ -24,7 +26,14 @@ namespace Сonfectionery.Services
         public static IServiceCollection AddKSqlDb(this IServiceCollection services,
             Action<KSqlDbConfig> configAction)
         {
-            services.Configure(configAction);
+            var kSqlDbConfig = new KSqlDbConfig();
+            configAction.Invoke(kSqlDbConfig);
+
+            services.ConfigureKSqlDb(kSqlDbConfig.BaseUrl, setupParameters =>
+            {
+                setupParameters.SetAutoOffsetReset(AutoOffsetReset.Earliest);
+                setupParameters.Options.ShouldPluralizeFromItemName = kSqlDbConfig.ShouldPluralizeFromItemName;
+            });
 
             return services;
         }

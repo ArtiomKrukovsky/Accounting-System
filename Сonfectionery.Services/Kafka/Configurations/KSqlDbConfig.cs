@@ -1,4 +1,4 @@
-﻿namespace Сonfectionery.Services.Kafka.Consumer
+﻿namespace Сonfectionery.Services.Kafka.Configurations
 {
     public class KSqlDbConfig
     {

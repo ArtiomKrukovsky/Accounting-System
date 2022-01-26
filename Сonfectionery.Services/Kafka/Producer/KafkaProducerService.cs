@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
+using Сonfectionery.Services.Kafka.Configurations;
 using Сonfectionery.Services.Kafka.Serializers;
 
 namespace Сonfectionery.Services.Kafka.Producer
