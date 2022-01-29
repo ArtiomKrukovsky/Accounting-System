@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ksqlDB.RestApi.Client.KSql.Linq.PullQueries;
 using ksqlDB.RestApi.Client.KSql.Query.Context;
 using MediatR;
+using Сonfectionery.API.Application.Constants;
 using Сonfectionery.API.Application.Interfaces;
 using Сonfectionery.API.Application.ViewModels;
 
@@ -34,10 +35,12 @@ namespace Сonfectionery.API.Application.Queries
 
         public async Task<OrderViewModel> Handle(GetOrderQuery request, CancellationToken cancellationToken)
         {
-            const string tableName = "orders_view";
+            const string tableName = KafkaConstants.OrdersTable;
+
+            var orderId = request.OrderId.ToString();
 
             var order = await _kSqlDbContext.CreatePullQuery<OrderViewModel>(tableName)
-                .Where(x => x.Id == request.OrderId.ToString())
+                .Where(x => x.Id == orderId)
                 .GetManyAsync(cancellationToken)
                 .FirstOrDefaultAsync(cancellationToken);
 
