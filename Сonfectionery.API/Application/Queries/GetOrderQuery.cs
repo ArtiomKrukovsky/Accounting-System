@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using ksqlDB.RestApi.Client.KSql.Linq.PullQueries;
-using ksqlDB.RestApi.Client.KSql.Query.Context;
 using MediatR;
 using Сonfectionery.API.Application.Constants;
 using Сonfectionery.API.Application.Interfaces;
 using Сonfectionery.API.Application.ViewModels;
+using Сonfectionery.Services.Kafka;
 
 namespace Сonfectionery.API.Application.Queries
 {
@@ -26,11 +24,11 @@ namespace Сonfectionery.API.Application.Queries
 
     public class GetOrderQueryHandler : IRequestHandler<GetOrderQuery, OrderViewModel>
     {
-        private readonly IKSqlDBContext _kSqlDbContext;
+        private readonly KSqlDbService<OrderViewModel> _kSqlDbService;
 
-        public GetOrderQueryHandler(IKSqlDBContext kSqlDbContext)
+        public GetOrderQueryHandler(KSqlDbService<OrderViewModel> kSqlDbService)
         {
-            _kSqlDbContext = kSqlDbContext;
+            _kSqlDbService = kSqlDbService;
         }
 
         public async Task<OrderViewModel> Handle(GetOrderQuery request, CancellationToken cancellationToken)
@@ -38,11 +36,7 @@ namespace Сonfectionery.API.Application.Queries
             const string tableName = KafkaConstants.OrdersTable;
 
             var orderId = request.OrderId.ToString();
-
-            var order = await _kSqlDbContext.CreatePullQuery<OrderViewModel>(tableName)
-                .Where(x => x.Id == orderId)
-                .GetManyAsync(cancellationToken)
-                .FirstOrDefaultAsync(cancellationToken);
+            var order = await _kSqlDbService.GetAsync(tableName, order => order.Id == orderId);
 
             return order;
         }

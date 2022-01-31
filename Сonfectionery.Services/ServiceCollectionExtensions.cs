@@ -26,6 +26,10 @@ namespace Сonfectionery.Services
         public static IServiceCollection AddKSqlDb(this IServiceCollection services,
             Action<KSqlDbConfig> configAction)
         {
+            services.AddSingleton(typeof(KSqlDbService<>));
+
+            services.Configure(configAction);
+
             var kSqlDbConfig = new KSqlDbConfig();
             configAction.Invoke(kSqlDbConfig);
 
