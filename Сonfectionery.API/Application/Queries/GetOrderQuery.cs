@@ -6,7 +6,7 @@ using MediatR;
 using Сonfectionery.API.Application.Constants;
 using Сonfectionery.API.Application.Interfaces;
 using Сonfectionery.API.Application.ViewModels;
-using Сonfectionery.Services.Kafka;
+using Сonfectionery.Services.KSqlDb;
 
 namespace Сonfectionery.API.Application.Queries
 {
@@ -24,11 +24,11 @@ namespace Сonfectionery.API.Application.Queries
 
     public class GetOrderQueryHandler : IRequestHandler<GetOrderQuery, OrderViewModel>
     {
-        private readonly KSqlDbService<OrderViewModel> _kSqlDbService;
+        private readonly IKSqlDbService<OrderViewModel> _kSqlDbService;
 
-        public GetOrderQueryHandler(KSqlDbService<OrderViewModel> kSqlDbService)
+        public GetOrderQueryHandler(IKSqlDbService<OrderViewModel> kSqlDbService)
         {
-            _kSqlDbService = kSqlDbService;
+            _kSqlDbService = kSqlDbService ?? throw new ArgumentNullException(nameof(kSqlDbService));
         }
 
         public async Task<OrderViewModel> Handle(GetOrderQuery request, CancellationToken cancellationToken)

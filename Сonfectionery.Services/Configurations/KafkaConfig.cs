@@ -1,8 +1,8 @@
 ﻿using Confluent.Kafka;
 
-namespace Сonfectionery.Services.Kafka.Configurations
+namespace Сonfectionery.Services.Configurations
 {
-    public class KafkaProducerConfig : ProducerConfig
+    public class KafkaConfig : ProducerConfig
     {
         public static string KafkaConfiguration = "Kafka";
 

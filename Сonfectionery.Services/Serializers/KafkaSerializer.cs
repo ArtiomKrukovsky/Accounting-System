@@ -3,7 +3,7 @@ using System.Text;
 using Confluent.Kafka;
 using Newtonsoft.Json;
 
-namespace Сonfectionery.Services.Kafka.Serializers
+namespace Сonfectionery.Services.Serializers
 {
     public class KafkaSerializer<T> : ISerializer<T>
     {

@@ -2,17 +2,17 @@
 using System.Threading.Tasks;
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
-using Сonfectionery.Services.Kafka.Configurations;
-using Сonfectionery.Services.Kafka.Serializers;
+using Сonfectionery.Services.Configurations;
+using Сonfectionery.Services.Serializers;
 
-namespace Сonfectionery.Services.Kafka.Producer
+namespace Сonfectionery.Services.Kafka
 {
-    public class KafkaProducerService<TKey, TValue> : IDisposable
+    public class KafkaService<TKey, TValue> : IKafkaService<TKey, TValue> where TValue : class
     {
         private readonly IProducer<TKey, TValue> _producer;
         private readonly string _topic;
 
-        public KafkaProducerService(IOptions<KafkaProducerConfig> config)
+        public KafkaService(IOptions<KafkaConfig> config)
         {
             _topic = config.Value.Topic;
             _producer = new ProducerBuilder<TKey, TValue>(config.Value)

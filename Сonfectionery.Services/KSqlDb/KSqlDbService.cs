@@ -7,11 +7,11 @@ using ksqlDB.RestApi.Client.KSql.Linq.PullQueries;
 using ksqlDB.RestApi.Client.KSql.Query.Context;
 using ksqlDB.RestApi.Client.KSql.Query.Options;
 using Microsoft.Extensions.Options;
-using Сonfectionery.Services.Kafka.Configurations;
+using Сonfectionery.Services.Configurations;
 
-namespace Сonfectionery.Services.Kafka
+namespace Сonfectionery.Services.KSqlDb
 {
-    public class KSqlDbService<TValue> where TValue: class
+    public class KSqlDbService<TValue> : IKSqlDbService<TValue> where TValue: class
     {
         private readonly IKSqlDBContext _kSqlDbContext;
 
@@ -39,6 +39,11 @@ namespace Сonfectionery.Services.Kafka
             return await _kSqlDbContext.CreatePullQuery<TValue>(tableName)
                 .GetManyAsync()
                 .ToListAsync();
+        }
+
+        public void Dispose()
+        {
+            _kSqlDbContext?.DisposeAsync();
         }
     }
 }

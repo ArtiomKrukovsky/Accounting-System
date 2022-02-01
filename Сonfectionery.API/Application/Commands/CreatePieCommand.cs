@@ -64,35 +64,39 @@ namespace Сonfectionery.API.Application.Commands
     public class CreatePieCommandHandler : IRequestHandler<CreatePieCommand, bool>
     {
         private readonly IPieRepository _pieRepository;
-        private readonly IKafkaMessageBus<string, Pie> _messageBus;
+        private readonly IKafkaService<string, Pie> _kafkaService;
         private readonly IMapper _mapper;
         private readonly ILogger<CreatePieCommand> _logger;
 
         public CreatePieCommandHandler(
             IPieRepository pieRepository,
-            IKafkaMessageBus<string, Pie> messageBus,
+            IKafkaService<string, Pie> kafkaService,
             IMapper mapper, 
             ILogger<CreatePieCommand> logger)
         {
             _pieRepository = pieRepository ?? throw new ArgumentNullException(nameof(pieRepository));
-            _messageBus = messageBus ?? throw new ArgumentNullException(nameof(messageBus));
-            _mapper = mapper;
-            _logger = logger;
+            _kafkaService = kafkaService ?? throw new ArgumentNullException(nameof(kafkaService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<bool> Handle(CreatePieCommand request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("----- Creating Pie - Pie: {@Name}", request.Name);
+
             var portions = _mapper.Map<Portions>(request.Portions);
             var pie = Pie.Create(request.Name, request.Description, portions);
 
             var ingredients = _mapper.Map<IEnumerable<Ingredient>>(request.Ingredients);
             pie.UpdateIngredients(ingredients);
 
-            _logger.LogInformation("----- Creating Pie - Pie: {@Pie}", pie);
+            _logger.LogInformation("----- Posting Pie in the SQL DB - Pie: {@Pie}", pie);
 
             await _pieRepository.AddAsync(pie);
 
-            await _messageBus.PublishAsync("pie", pie);
+            _logger.LogInformation("----- Sending Pie in Kafka - Pie: {@Pie}", pie);
+
+            await _kafkaService.ProduceAsync("pie", pie);
 
             return true;
         }

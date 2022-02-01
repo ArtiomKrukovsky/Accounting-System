@@ -47,21 +47,23 @@ namespace Сonfectionery.API.Application.Commands
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IKafkaMessageBus<string, Order> _messageBus;
+        private readonly IKafkaService<string, Order> _kafkaService;
         private readonly ILogger<CreateOrderCommandHandler> _logger;
 
         public CreateOrderCommandHandler(
-            IOrderRepository orderRepository, 
-            IKafkaMessageBus<string, Order> messageBus, 
+            IOrderRepository orderRepository,
+            IKafkaService<string, Order> kafkaService,
             ILogger<CreateOrderCommandHandler> logger)
         {
             _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
-            _messageBus = messageBus ?? throw new ArgumentNullException(nameof(messageBus));
-            _logger = logger;
+            _kafkaService = kafkaService ?? throw new ArgumentNullException(nameof(kafkaService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<bool> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("----- Creating Order - Order: {@Title}", request.Title);
+
             var order = Order.Create(request.Title);
 
             foreach (var orderItem in request.OrderItems)
@@ -69,11 +71,13 @@ namespace Сonfectionery.API.Application.Commands
                 order.AddOrderItem(orderItem.PieId, orderItem.UnitPrice, orderItem.Discount, orderItem.Units);
             }
 
-            _logger.LogInformation("----- Creating Order - Order: {@Order}", order);
+            _logger.LogInformation("----- Posting Order in the SQL DB - Order: {@Order}", order);
 
             await _orderRepository.AddAsync(order);
 
-            await _messageBus.PublishAsync("order", order);
+            _logger.LogInformation("----- Sending Order in Kafka - Order: {@Order}", order);
+
+            await _kafkaService.ProduceAsync("order", order);
 
             return true;
         }

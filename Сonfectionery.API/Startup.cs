@@ -14,8 +14,7 @@ using Newtonsoft.Json;
 using Сonfectionery.API.Application.Behaviors;
 using Сonfectionery.API.Extensions;
 using Сonfectionery.Services;
-using Сonfectionery.Services.Kafka.Configurations;
-using Сonfectionery.Services.Kafka.Producer;
+using Сonfectionery.Services.Configurations;
 
 namespace Сonfectionery.API
 {
@@ -49,11 +48,10 @@ namespace Сonfectionery.API
             });
 
             // Get Kafka configuration
-            var kafkaConfig = new KafkaProducerConfig();
-            Configuration.Bind(KafkaProducerConfig.KafkaConfiguration, kafkaConfig);
+            var kafkaConfig = new KafkaConfig();
+            Configuration.Bind(KafkaConfig.KafkaConfiguration, kafkaConfig);
 
             // Configure Kafka
-            services.AddKafkaMessageBus();
             services.AddKafkaProducer(p =>
             {
                 p.Topic = kafkaConfig.Topic;
