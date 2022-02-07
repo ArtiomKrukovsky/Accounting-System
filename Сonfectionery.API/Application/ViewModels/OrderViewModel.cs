@@ -7,7 +7,7 @@ namespace Сonfectionery.API.Application.ViewModels
     {
         public string Id { get; set; }
         public string Title { get; set; }
-        public string CreateOrder { get; set; }
+        public string CreatedDate { get; set; }
         public string Status { get; set; }
         public string OrderItemId { get; set; }
         public string PieId { get; set; }

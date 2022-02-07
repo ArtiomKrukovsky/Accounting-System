@@ -38,5 +38,12 @@ namespace Сonfectionery.API.Controllers
         {
             return await _mediator.Send(createOrderCommand);
         }
+
+        [HttpPut]
+        [Route("orderId/{orderId}")]
+        public async Task<ActionResult<bool>> CancelOrderAsync(Guid orderId)
+        {
+            return await _mediator.Send(new CancelOrderCommand(orderId));
+        }
     }
 }

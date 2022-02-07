@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Сonfectionery.Domain.Seedwork;
 
 namespace Сonfectionery.Domain.Aggregates.OrderAggregate
@@ -44,6 +45,33 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
                 var orderItem = OrderItem.Create(pieId, unitPrice, discount, units);
                 _orderItems.Add(orderItem);
             }
+        }
+
+        public void SetCancelledStatus()
+        {
+            if (_orderStatusId == OrderStatus.Paid.Id ||
+                _orderStatusId == OrderStatus.Shipping.Id ||
+                _orderStatusId == OrderStatus.Cooking.Id)
+            {
+                StatusChangeException(OrderStatus.Cancelled);
+            }
+
+            _orderStatusId = OrderStatus.Cancelled.Id;
+        }
+
+        public void RefreshStatus()
+        {
+            OrderStatus = OrderStatus.FromIdentifier(_orderStatusId);
+        }
+
+        public decimal GetSummaryPrice()
+        {
+            return OrderItems.Sum(orderItem => orderItem.TotalPrice);
+        }
+
+        private void StatusChangeException(OrderStatus orderStatusToChange)
+        {
+            throw new ArgumentException($"Is not possible to change the order status from {OrderStatus.Name} to {orderStatusToChange.Name}.");
         }
     }
 }

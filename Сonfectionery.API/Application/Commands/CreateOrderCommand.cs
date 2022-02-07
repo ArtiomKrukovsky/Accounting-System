@@ -77,6 +77,8 @@ namespace Сonfectionery.API.Application.Commands
 
             _logger.LogInformation("----- Sending Order in Kafka - Order: {@Order}", order);
 
+            order.RefreshStatus();
+
             await _kafkaService.ProduceAsync("order", order);
 
             return true;
