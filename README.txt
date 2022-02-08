@@ -3,7 +3,7 @@ CREATE STREAM orders (
 	id VARCHAR, 
 	title VARCHAR, 
 	orderDate VARCHAR,
-	orderStatus VARCHAR,
+	orderStatus STRUCT<id INTEGER, name VARCHAR>,
 	orderItems ARRAY<
 					STRUCT<
 					id VARCHAR,
@@ -23,7 +23,7 @@ CREATE STREAM orders_denormalized AS
   SELECT id as id,
          title AS title,
          orderDate AS createdDate,
-	 orderStatus AS status,
+	 orderStatus->name AS status,
 	 EXPLODE(orderItems)->id AS orderItemId,	
          EXPLODE(orderItems)->pieId AS pieId,
          EXPLODE(orderItems)->unitPrice AS unitPrice,
@@ -32,6 +32,7 @@ CREATE STREAM orders_denormalized AS
          EXPLODE(orderItems)->discount AS discount
   FROM orders
   EMIT CHANGES;
+
 -- TABLES
 CREATE TABLE orders_view AS
   SELECT id,
