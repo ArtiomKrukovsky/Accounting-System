@@ -11,7 +11,7 @@ namespace Сonfectionery.Services
         public static IServiceCollection AddKafkaProducer(this IServiceCollection services,
             Action<KafkaConfig> configAction)
         {
-            services.AddSingleton(typeof(IKafkaService<,>), typeof(KafkaService<,>));
+            services.AddSingleton(typeof(IKafkaService<>), typeof(KafkaService<>));
 
             services.Configure(configAction);
 

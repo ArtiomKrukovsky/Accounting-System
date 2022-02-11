@@ -13,7 +13,7 @@ CREATE STREAM orders (
 					units INTEGER,
 					totalPrice DOUBLE,
 					discount DOUBLE>>)
-  WITH (kafka_topic='Confectionery', value_format='json');
+  WITH (kafka_topic='orders', value_format='json');
 
 - kafka_topic - Name of the Kafka topic underlying the stream.
 - value_format - Encoding of the messages stored in the Kafka topic.

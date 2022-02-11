@@ -2,8 +2,8 @@
 
 namespace Сonfectionery.Services.Kafka
 {
-    public interface IKafkaService<TKey, TValue>
+    public interface IKafkaService<TValue>
     {
-        Task ProduceAsync(TKey key, TValue value);
+        Task ProduceAsync(string topic, string key, TValue value);
     }
 }

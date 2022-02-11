@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Сonfectionery.API.Application.Constants;
 using Сonfectionery.API.Application.Interfaces;
 using Сonfectionery.Domain.Aggregates.OrderAggregate;
 using Сonfectionery.Services.Kafka;
@@ -34,12 +35,12 @@ namespace Сonfectionery.API.Application.Commands
     public class CancelOrderCommandHandler : IRequestHandler<CancelOrderCommand, bool>
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IKafkaService<string, Order> _kafkaService;
+        private readonly IKafkaService<Order> _kafkaService;
         private readonly ILogger<CancelOrderCommandHandler> _logger;
 
         public CancelOrderCommandHandler(
             IOrderRepository orderRepository, 
-            IKafkaService<string, Order> kafkaService, 
+            IKafkaService<Order> kafkaService, 
             ILogger<CancelOrderCommandHandler> logger)
         {
             _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
@@ -68,7 +69,10 @@ namespace Сonfectionery.API.Application.Commands
 
             existingOrder.RefreshStatus();
 
-            await _kafkaService.ProduceAsync("order", existingOrder);
+            const string ordersTopic = KafkaConstants.OrdersTopic;
+            const string orderKey = KafkaConstants.OrderKey;
+
+            await _kafkaService.ProduceAsync(ordersTopic, orderKey, existingOrder);
 
             return true;
         }

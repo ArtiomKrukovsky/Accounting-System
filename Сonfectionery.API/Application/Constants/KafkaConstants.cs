@@ -7,5 +7,8 @@
 
         public const string OrdersTopic = "orders";
         public const string PiesTopic = "pies";
+        
+        public const string OrderKey = "order";
+        public const string PieKey = "pie";
     }
 }

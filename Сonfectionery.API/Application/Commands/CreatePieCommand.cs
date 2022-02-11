@@ -8,6 +8,7 @@ using FluentValidation;
 using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Сonfectionery.API.Application.Constants;
 using Сonfectionery.API.Application.DTOs;
 using Сonfectionery.API.Application.Interfaces;
 using Сonfectionery.Domain.Aggregates.PieAggregate;
@@ -64,13 +65,13 @@ namespace Сonfectionery.API.Application.Commands
     public class CreatePieCommandHandler : IRequestHandler<CreatePieCommand, bool>
     {
         private readonly IPieRepository _pieRepository;
-        private readonly IKafkaService<string, Pie> _kafkaService;
+        private readonly IKafkaService<Pie> _kafkaService;
         private readonly IMapper _mapper;
         private readonly ILogger<CreatePieCommand> _logger;
 
         public CreatePieCommandHandler(
             IPieRepository pieRepository,
-            IKafkaService<string, Pie> kafkaService,
+            IKafkaService<Pie> kafkaService,
             IMapper mapper, 
             ILogger<CreatePieCommand> logger)
         {
@@ -96,7 +97,10 @@ namespace Сonfectionery.API.Application.Commands
 
             _logger.LogInformation("----- Sending Pie in Kafka - Pie: {@Pie}", pie);
 
-            await _kafkaService.ProduceAsync("pie", pie);
+            const string piesTopic = KafkaConstants.PiesTopic;
+            const string pieKey = KafkaConstants.PieKey;
+
+            await _kafkaService.ProduceAsync(piesTopic, pieKey, pie);
 
             return true;
         }
