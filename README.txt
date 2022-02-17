@@ -1,4 +1,5 @@
 -- STREAMS
+a) Orders
 CREATE STREAM orders (
 	id VARCHAR, 
 	title VARCHAR, 
@@ -33,6 +34,40 @@ CREATE STREAM orders_denormalized AS
   FROM orders
   EMIT CHANGES;
 
+b) Pies
+CREATE STREAM pies (
+	id VARCHAR,
+	name VARCHAR,
+	description VARCHAR,
+	portions STRUCT<minimum INTEGER, maximum INTEGER>,
+	ingredients ARRAY<
+					STRUCT<
+					name VARCHAR,
+					isAllergen BOOLEAN,
+					relativeAmount DOUBLE>>)
+  WITH (kafka_topic='pies', value_format='json');
+
+CREATE STREAM pies_denormalized AS
+  SELECT id as id,
+	 name as name,
+ 	 description as description,
+	 portions->minimum as minimumPortions,
+         portions->maximum as maximumPortions,	
+	 ingredients as ingredients
+  FROM pies
+  EMIT CHANGES;
+
+CREATE TABLE pies_view AS
+  SELECT id,
+         LATEST_BY_OFFSET(name) as name,
+         LATEST_BY_OFFSET(description) as description,
+	 LATEST_BY_OFFSET(minimumPortions) as minimumPortions,
+ 	 LATEST_BY_OFFSET(maximumPortions) as maximumPortions,
+	 COLLECT_LIST(CAST(ingredients as VARCHAR)) as ingredients 
+  FROM pies_denormalized
+  GROUP BY id
+  EMIT CHANGES;
+	
 -- TABLES
 CREATE TABLE orders_view AS
   SELECT id,
