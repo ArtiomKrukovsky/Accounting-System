@@ -2,11 +2,11 @@
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
-using MapsterMapper;
 using MediatR;
+using Сonfectionery.API.Application.Constants;
 using Сonfectionery.API.Application.Interfaces;
 using Сonfectionery.API.Application.ViewModels;
-using Сonfectionery.Domain.Aggregates.PieAggregate;
+using Сonfectionery.Services.KSqlDb;
 
 namespace Сonfectionery.API.Application.Queries
 {
@@ -24,20 +24,21 @@ namespace Сonfectionery.API.Application.Queries
 
     public class GetPieQueryHandler : IRequestHandler<GetPieQuery, PieViewModel>
     {
-        private readonly IPieRepository _pieRepository;
-        private readonly IMapper _mapper;
+        private readonly IKSqlDbService<PieViewModel> _kSqlDbService;
 
-        public GetPieQueryHandler(IPieRepository pieRepository, IMapper mapper)
+        public GetPieQueryHandler(IKSqlDbService<PieViewModel> kSqlDbService)
         {
-            _pieRepository = pieRepository;
-            _mapper = mapper;
+            _kSqlDbService = kSqlDbService ?? throw new ArgumentNullException(nameof(kSqlDbService));
         }
 
         public async Task<PieViewModel> Handle(GetPieQuery request, CancellationToken cancellationToken)
         {
-            var pie = await _pieRepository.GetAsync(request.PieId);
+            const string tableName = KafkaConstants.PiesTable;
 
-            return _mapper.Map<PieViewModel>(pie);
+            var pieId = request.PieId.ToString();
+            var pie = await _kSqlDbService.GetAsync(tableName, pie => pie.Id == pieId);
+
+            return pie;
         }
     }
 }

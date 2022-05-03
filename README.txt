@@ -25,13 +25,19 @@ CREATE STREAM orders_denormalized AS
          title AS title,
          orderDate AS createdDate,
 	 orderStatus->name AS status,
-	 EXPLODE(orderItems)->id AS orderItemId,	
-         EXPLODE(orderItems)->pieId AS pieId,
-         EXPLODE(orderItems)->unitPrice AS unitPrice,
-         EXPLODE(orderItems)->units AS units,
-         EXPLODE(orderItems)->totalPrice AS totalPrice,
-         EXPLODE(orderItems)->discount AS discount
+	 orderItems as orderItems
   FROM orders
+  EMIT CHANGES;
+
+-- after fix https://github.com/confluentinc/ksql/issues/5437
+CREATE TABLE orders_view AS
+  SELECT id,
+         LATEST_BY_OFFSET(title) as title,
+         LATEST_BY_OFFSET(createdDate) as createdDate,
+	 LATEST_BY_OFFSET(status) as status,
+	 LATEST_BY_OFFSET(orderItems) as orderItems
+  FROM orders_denormalized 
+  GROUP BY id
   EMIT CHANGES;
 
 b) Pies
@@ -57,30 +63,15 @@ CREATE STREAM pies_denormalized AS
   FROM pies
   EMIT CHANGES;
 
+-- after fix https://github.com/confluentinc/ksql/issues/5437
 CREATE TABLE pies_view AS
   SELECT id,
          LATEST_BY_OFFSET(name) as name,
          LATEST_BY_OFFSET(description) as description,
 	 LATEST_BY_OFFSET(minimumPortions) as minimumPortions,
  	 LATEST_BY_OFFSET(maximumPortions) as maximumPortions,
-	 COLLECT_LIST(CAST(ingredients as VARCHAR)) as ingredients 
+	 LATEST_BY_OFFSET(ingredients) as ingredients 
   FROM pies_denormalized
-  GROUP BY id
-  EMIT CHANGES;
-	
--- TABLES
-CREATE TABLE orders_view AS
-  SELECT id,
-         LATEST_BY_OFFSET(title) as title,
-         LATEST_BY_OFFSET(createdDate) as createdDate,
-	 LATEST_BY_OFFSET(status) as status,
-	 LATEST_BY_OFFSET(orderItemId) as orderItemId,	
-         LATEST_BY_OFFSET(pieId) as pieId,
-         LATEST_BY_OFFSET(unitPrice) as unitPrice,
-         LATEST_BY_OFFSET(units) as units,
-         LATEST_BY_OFFSET(totalPrice) as totalPrice,
-         LATEST_BY_OFFSET(discount) as discount
-  FROM orders_denormalized 
   GROUP BY id
   EMIT CHANGES;
 
