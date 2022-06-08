@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Сonfectionery.Domain.Aggregates.OrderAggregate;
+using Сonfectionery.Domain.Seedwork;
 
 namespace Сonfectionery.Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
         private readonly СonfectioneryContext _context;
+        public IUnitOfWork UnitOfWork => _context;
 
         public OrderRepository(СonfectioneryContext context)
         {
