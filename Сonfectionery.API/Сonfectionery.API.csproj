@@ -27,4 +27,8 @@
     <ProjectReference Include="..\Сonfectionery.Services\Сonfectionery.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\EventHandlers\DomainEventHandlers\" />
+  </ItemGroup>
+
 </Project>

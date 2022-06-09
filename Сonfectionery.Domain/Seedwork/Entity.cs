@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Сonfectionery.Domain.Seedwork
 {
@@ -11,6 +12,25 @@ namespace Сonfectionery.Domain.Seedwork
         public bool IsTransient()
         {
             return this.Id == default;
+        }
+
+        private List<IDomainEvent> _domainEvents;
+        public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents?.AsReadOnly();
+
+        public void AddDomainEvent(IDomainEvent eventItem)
+        {
+            _domainEvents ??= new List<IDomainEvent>();
+            _domainEvents.Add(eventItem);
+        }
+
+        public void RemoveDomainEvent(IDomainEvent eventItem)
+        {
+            _domainEvents?.Remove(eventItem);
+        }
+
+        public void ClearDomainEvents()
+        {
+            _domainEvents?.Clear();
         }
 
         public override bool Equals(object obj)

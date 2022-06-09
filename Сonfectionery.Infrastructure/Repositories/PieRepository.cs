@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Сonfectionery.Domain.Aggregates.PieAggregate;
+using Сonfectionery.Domain.Seedwork;
 
 namespace Сonfectionery.Infrastructure.Repositories
 {
     public class PieRepository : IPieRepository
     {
         private readonly СonfectioneryContext _context;
+        public IUnitOfWork UnitOfWork => _context;
 
         public PieRepository(СonfectioneryContext context)
         {

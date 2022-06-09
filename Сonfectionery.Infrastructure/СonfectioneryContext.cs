@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -7,18 +6,24 @@ using Сonfectionery.Domain.Aggregates.OrderAggregate;
 using Сonfectionery.Domain.Aggregates.PieAggregate;
 using Сonfectionery.Domain.Seedwork;
 using Сonfectionery.Infrastructure.EntityConfigurations;
+using Сonfectionery.Infrastructure.Processing.EventsDispatcher.Interfaces;
+using Сonfectionery.Infrastructure.Processing.Outbox;
 
 namespace Сonfectionery.Infrastructure
 {
     public class СonfectioneryContext: DbContext, IUnitOfWork
     {
-        public СonfectioneryContext(DbContextOptions<СonfectioneryContext> options) : base(options) { }
+        private readonly IDomainEventsDispatcher _domainEventsDispatcher;
+
+        public СonfectioneryContext(DbContextOptions<СonfectioneryContext> options, 
+            IDomainEventsDispatcher domainEventsDispatcher) : base(options)
+        {
+            _domainEventsDispatcher = domainEventsDispatcher ?? throw new ArgumentNullException(nameof(domainEventsDispatcher));
+        }
 
         public DbSet<Pie> Pies { get; set; }
         public DbSet<Order> Orders { get; set; }
-
-        private ITransaction _currentTransaction;
-
+        public DbSet<OutboxMessage> OutboxMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,61 +35,11 @@ namespace Сonfectionery.Infrastructure
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            //todo: dispatch domain events
+            await _domainEventsDispatcher.DispatchEventsAsync();
 
             await base.SaveChangesAsync(cancellationToken);
 
             return true;
-        }
-
-        public async Task<ITransaction> BeginTransactionAsync()
-        {
-            if (_currentTransaction != null) return null;
-
-            var dbTransaction = await Database.BeginTransactionAsync(IsolationLevel.ReadCommitted);
-
-            _currentTransaction = new Transaction(dbTransaction);
-            return _currentTransaction;
-        }
-
-        public async Task CommitTransactionAsync(ITransaction transaction)
-        {
-            if (transaction == null) throw new ArgumentNullException(nameof(transaction));
-
-            try
-            {
-                await SaveChangesAsync();
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await RollbackTransactionAsync();
-                throw;
-            }
-            finally
-            {
-                if (_currentTransaction != null)
-                {
-                    _currentTransaction.Dispose();
-                    _currentTransaction = null;
-                }
-            }
-        }
-
-        public async Task RollbackTransactionAsync()
-        {
-            try
-            {
-                await _currentTransaction?.RollbackAsync();
-            }
-            finally
-            {
-                if (_currentTransaction != null)
-                {
-                    _currentTransaction.Dispose();
-                    _currentTransaction = null;
-                }
-            }
         }
     }
 }

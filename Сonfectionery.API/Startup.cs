@@ -1,6 +1,4 @@
 ﻿using System.Reflection;
-using ksqlDb.RestApi.Client.DependencyInjection;
-using ksqlDB.RestApi.Client.KSql.Query.Options;
 using Mapster;
 using MapsterMapper;
 using MediatR;
@@ -13,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Сonfectionery.API.Application.Behaviors;
 using Сonfectionery.API.Extensions;
+using Сonfectionery.Domain.Seedwork;
 using Сonfectionery.Services;
 using Сonfectionery.Services.Configurations;
 
@@ -69,6 +68,9 @@ namespace Сonfectionery.API
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+
+            // Configure Domain Events
+            //TODO: Register events
 
             // Configure Repositories
             services.AddRepositories();
