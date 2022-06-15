@@ -94,6 +94,7 @@ namespace Сonfectionery.API.Application.Commands
             _logger.LogInformation("----- Posting Pie in the SQL DB - Pie: {@Pie}", pie);
 
             await _pieRepository.AddAsync(pie);
+            await _pieRepository.UnitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation("----- Sending Pie in Kafka - Pie: {@Pie}", pie);
 

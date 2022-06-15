@@ -63,7 +63,8 @@ namespace Сonfectionery.API.Application.Commands
 
             _logger.LogInformation("----- Updating Order in the SQL DB - Order: {@Order}", existingOrder.Title);
 
-            await _orderRepository.UpdateAsync(existingOrder);
+            _orderRepository.Update(existingOrder);
+            await _orderRepository.UnitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation("----- Sending Updated Order in Kafka - Order: {@Order}", existingOrder.Title);
 

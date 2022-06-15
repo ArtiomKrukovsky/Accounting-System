@@ -31,12 +31,13 @@ namespace Сonfectionery.Infrastructure
             modelBuilder.ApplyConfiguration(new OrderItemEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OrderStatusEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new PieEntityTypeConfiguration());
+
+            modelBuilder.ApplyConfiguration(new OutboxMessageEntityTypeConfiguration());
         }
 
-        public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<bool> CommitAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             await _domainEventsDispatcher.DispatchEventsAsync();
-
             await base.SaveChangesAsync(cancellationToken);
 
             return true;

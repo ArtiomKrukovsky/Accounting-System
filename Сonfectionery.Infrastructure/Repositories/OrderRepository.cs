@@ -36,16 +36,12 @@ namespace Сonfectionery.Infrastructure.Repositories
         public async Task<Order> AddAsync(Order order)
         {
             await _context.Orders.AddAsync(order);
-            await _context.SaveChangesAsync();
-
             return order;
         }
 
-        public async Task<Order> UpdateAsync(Order order)
+        public Order Update(Order order)
         {
             _context.Orders.Update(order);
-            await _context.SaveChangesAsync();
-
             return order;
         }
     }

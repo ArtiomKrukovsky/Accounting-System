@@ -6,6 +6,6 @@ namespace Сonfectionery.Domain.Seedwork
 {
     public interface IUnitOfWork: IDisposable
     {
-        Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<bool> CommitAsync(CancellationToken cancellationToken = default(CancellationToken));
     }
 }

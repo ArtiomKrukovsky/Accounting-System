@@ -75,6 +75,7 @@ namespace Сonfectionery.API.Application.Commands
             _logger.LogInformation("----- Posting Order in the SQL DB - Order: {@Order}", order);
 
             await _orderRepository.AddAsync(order);
+            await _orderRepository.UnitOfWork.CommitAsync(cancellationToken);
 
             _logger.LogInformation("----- Sending Order in Kafka - Order: {@Order}", order);
 

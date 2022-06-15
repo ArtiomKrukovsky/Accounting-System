@@ -36,8 +36,6 @@ namespace Сonfectionery.Infrastructure.Repositories
         public async Task<Pie> AddAsync(Pie pie)
         {
             await _context.Pies.AddAsync(pie);
-            await _context.SaveChangesAsync();
-
             return pie;
         }
     }
