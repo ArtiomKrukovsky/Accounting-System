@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Сonfectionery.API.Application.Behaviors;
 using Сonfectionery.API.Extensions;
-using Сonfectionery.Domain.Seedwork;
+using Сonfectionery.Infrastructure;
 using Сonfectionery.Services;
 using Сonfectionery.Services.Configurations;
 
@@ -74,6 +74,9 @@ namespace Сonfectionery.API
 
             // Configure Repositories
             services.AddRepositories();
+
+            // Start Quartz
+            services.StartQuartz();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

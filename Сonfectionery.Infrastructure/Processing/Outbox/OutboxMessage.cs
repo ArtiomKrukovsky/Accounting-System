@@ -6,7 +6,7 @@ namespace Сonfectionery.Infrastructure.Processing.Outbox
     {
         public Guid Id { get; private set; }
         public DateTime OccurredOn { get; private set; }
-        public DateTime ProcessedAt { get; private set; }
+        public DateTime? ProcessedAt { get; private set; }
         public string Type { get; private set; }
         public string Payload { get; private set; }
 
@@ -28,6 +28,11 @@ namespace Сonfectionery.Infrastructure.Processing.Outbox
                 Type = type,
                 Payload = payload
             };
+        }
+
+        public void RefreshProcessedDate()
+        {
+            ProcessedAt = DateTime.UtcNow;
         }
     }
 }

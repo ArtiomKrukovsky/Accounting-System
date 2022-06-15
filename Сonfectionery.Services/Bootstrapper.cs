@@ -6,7 +6,7 @@ using Сonfectionery.Services.KSqlDb;
 
 namespace Сonfectionery.Services
 {
-    public static class ServiceCollectionExtensions
+    public static class Bootstrapper
     {
         public static IServiceCollection AddKafkaProducer(this IServiceCollection services,
             Action<KafkaConfig> configAction)
