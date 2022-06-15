@@ -8,6 +8,7 @@ using Сonfectionery.Domain.Seedwork;
 
 namespace Сonfectionery.Infrastructure.Processing.Quartz.Jobs
 {
+    [DisallowConcurrentExecution]
     public class ProcessOutboxJob : IJob
     {
         private readonly СonfectioneryContext _context;
