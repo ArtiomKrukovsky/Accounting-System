@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Сonfectionery.Domain.Aggregates.OrderAggregate;
 using Сonfectionery.Domain.Aggregates.PieAggregate;
 using Сonfectionery.Infrastructure;
+using Сonfectionery.Infrastructure.Processing.EventsDispatcher;
+using Сonfectionery.Infrastructure.Processing.EventsDispatcher.Interfaces;
 using Сonfectionery.Infrastructure.Repositories;
 
 namespace Сonfectionery.API.Extensions
@@ -29,6 +31,11 @@ namespace Сonfectionery.API.Extensions
         {
             services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<IPieRepository, PieRepository>();
+        }
+
+        public static void AddDomainEvents(this IServiceCollection services)
+        {
+            services.AddScoped<IDomainEventsDispatcher, DomainEventsDispatcher>();
         }
     }
 }

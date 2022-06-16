@@ -70,7 +70,7 @@ namespace Сonfectionery.API
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
             // Configure Domain Events
-            //TODO: Register events
+            services.AddDomainEvents();
 
             // Configure Repositories
             services.AddRepositories();
