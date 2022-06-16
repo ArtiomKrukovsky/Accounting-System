@@ -1,17 +1,36 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.Extensions.Logging;
+using Сonfectionery.API.Application.Constants;
+using Сonfectionery.Domain.Aggregates.PieAggregate;
 using Сonfectionery.Domain.Events.DomainEventNotifications;
+using Сonfectionery.Services.Kafka;
 
 namespace Сonfectionery.API.Application.EventHandlers.DomainNotificationHandlers
 {
     public class PieCreatedNotificationHandler :  INotificationHandler<PieCreatedNotification>
     {
-        public Task Handle(PieCreatedNotification notification, CancellationToken cancellationToken)
-        {
-            //TODO: send event to kafka
+        private readonly IKafkaService<Pie> _kafkaService;
+        private readonly ILogger<PieCreatedNotificationHandler> _logger;
 
-            return Task.CompletedTask;
+        public PieCreatedNotificationHandler(
+            IKafkaService<Pie> kafkaService,
+            ILogger<PieCreatedNotificationHandler> logger)
+        {
+            _kafkaService = kafkaService ?? throw new ArgumentNullException(nameof(kafkaService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task Handle(PieCreatedNotification notification, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("----- Sending Pie in Kafka via Creating - Pie: {@Pie}", notification.Pie);
+
+            const string piesTopic = KafkaConstants.PiesTopic;
+            const string pieKey = KafkaConstants.PieKey;
+
+            await _kafkaService.ProduceAsync(piesTopic, pieKey, notification.Pie);
         }
     }
 }

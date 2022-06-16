@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Сonfectionery.API.Application.Constants;
 using Сonfectionery.API.Application.DTOs;
 using Сonfectionery.API.Application.Interfaces;
 using Сonfectionery.Domain.Aggregates.OrderAggregate;
-using Сonfectionery.Services.Kafka;
 
 namespace Сonfectionery.API.Application.Commands
 {
@@ -48,16 +46,13 @@ namespace Сonfectionery.API.Application.Commands
     public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, bool>
     {
         private readonly IOrderRepository _orderRepository;
-        private readonly IKafkaService<Order> _kafkaService;
         private readonly ILogger<CreateOrderCommandHandler> _logger;
 
         public CreateOrderCommandHandler(
             IOrderRepository orderRepository,
-            IKafkaService<Order> kafkaService,
             ILogger<CreateOrderCommandHandler> logger)
         {
             _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
-            _kafkaService = kafkaService ?? throw new ArgumentNullException(nameof(kafkaService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -72,19 +67,12 @@ namespace Сonfectionery.API.Application.Commands
                 order.AddOrderItem(orderItem.PieId, orderItem.UnitPrice, orderItem.Discount, orderItem.Units);
             }
 
+            order.RefreshStatus();
+
             _logger.LogInformation("----- Posting Order in the SQL DB - Order: {@Order}", order);
 
             await _orderRepository.AddAsync(order);
             await _orderRepository.UnitOfWork.CommitAsync(cancellationToken);
-
-            _logger.LogInformation("----- Sending Order in Kafka - Order: {@Order}", order);
-
-            order.RefreshStatus();
-
-            const string ordersTopic = KafkaConstants.OrdersTopic;
-            const string orderKey = KafkaConstants.OrderKey;
-
-            await _kafkaService.ProduceAsync(ordersTopic, orderKey, order);
 
             return true;
         }

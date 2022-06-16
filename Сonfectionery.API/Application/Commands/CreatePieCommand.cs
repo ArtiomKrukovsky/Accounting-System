@@ -8,11 +8,9 @@ using FluentValidation;
 using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Сonfectionery.API.Application.Constants;
 using Сonfectionery.API.Application.DTOs;
 using Сonfectionery.API.Application.Interfaces;
 using Сonfectionery.Domain.Aggregates.PieAggregate;
-using Сonfectionery.Services.Kafka;
 
 namespace Сonfectionery.API.Application.Commands
 {
@@ -65,18 +63,15 @@ namespace Сonfectionery.API.Application.Commands
     public class CreatePieCommandHandler : IRequestHandler<CreatePieCommand, bool>
     {
         private readonly IPieRepository _pieRepository;
-        private readonly IKafkaService<Pie> _kafkaService;
         private readonly IMapper _mapper;
         private readonly ILogger<CreatePieCommand> _logger;
 
         public CreatePieCommandHandler(
             IPieRepository pieRepository,
-            IKafkaService<Pie> kafkaService,
             IMapper mapper, 
             ILogger<CreatePieCommand> logger)
         {
             _pieRepository = pieRepository ?? throw new ArgumentNullException(nameof(pieRepository));
-            _kafkaService = kafkaService ?? throw new ArgumentNullException(nameof(kafkaService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -95,13 +90,6 @@ namespace Сonfectionery.API.Application.Commands
 
             await _pieRepository.AddAsync(pie);
             await _pieRepository.UnitOfWork.CommitAsync(cancellationToken);
-
-            _logger.LogInformation("----- Sending Pie in Kafka - Pie: {@Pie}", pie);
-
-            const string piesTopic = KafkaConstants.PiesTopic;
-            const string pieKey = KafkaConstants.PieKey;
-
-            await _kafkaService.ProduceAsync(piesTopic, pieKey, pie);
 
             return true;
         }
