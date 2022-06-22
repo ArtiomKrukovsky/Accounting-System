@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Mapster;
 using MapsterMapper;
 using MediatR;
@@ -27,7 +30,7 @@ namespace Сonfectionery.API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
 
@@ -69,14 +72,14 @@ namespace Сonfectionery.API
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
-            // Configure Domain Events
-            services.AddDomainEvents();
-
             // Configure Repositories
             services.AddRepositories();
 
-            // Start Quartz
-            services.StartQuartz();
+            // Configure Domain Events
+            services.AddDomainEvents();
+
+            // Configure Autofac
+            return services.CreateAutofacServiceProvider();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

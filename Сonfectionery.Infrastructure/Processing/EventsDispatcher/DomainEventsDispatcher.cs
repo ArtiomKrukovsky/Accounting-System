@@ -15,18 +15,16 @@ namespace Сonfectionery.Infrastructure.Processing.EventsDispatcher
     {
         private readonly IMediator _mediator;
         private readonly ILifetimeScope _scope;
-        private readonly СonfectioneryContext _context;
 
-        public DomainEventsDispatcher(IMediator mediator, ILifetimeScope scope, СonfectioneryContext context)
+        public DomainEventsDispatcher(IMediator mediator, ILifetimeScope scope)
         {
             _mediator = mediator;
             _scope = scope;
-            _context = context;
         }
 
-        public async Task DispatchEventsAsync()
+        public async Task DispatchEventsAsync(СonfectioneryContext context)
         {
-            var domainEntities = _context.ChangeTracker
+            var domainEntities = context.ChangeTracker
                 .Entries<Entity>()
                 .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any()).ToList();
 
@@ -71,7 +69,10 @@ namespace Сonfectionery.Infrastructure.Processing.EventsDispatcher
                     type,
                     data);
 
-                _context.OutboxMessages.Add(outboxMessage);
+                if (outboxMessage != null)
+                {
+                    context.OutboxMessages.Add(outboxMessage);
+                }
             }
         }
     }

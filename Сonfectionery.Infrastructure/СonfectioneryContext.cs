@@ -37,7 +37,7 @@ namespace Сonfectionery.Infrastructure
 
         public async Task<bool> CommitAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            await _domainEventsDispatcher.DispatchEventsAsync();
+            await _domainEventsDispatcher.DispatchEventsAsync(this);
             await base.SaveChangesAsync(cancellationToken);
 
             return true;

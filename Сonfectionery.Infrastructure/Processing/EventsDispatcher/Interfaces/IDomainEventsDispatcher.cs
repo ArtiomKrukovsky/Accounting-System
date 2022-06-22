@@ -4,6 +4,6 @@ namespace Сonfectionery.Infrastructure.Processing.EventsDispatcher.Interfaces
 {
     public interface IDomainEventsDispatcher
     {
-        Task DispatchEventsAsync();
+        Task DispatchEventsAsync(СonfectioneryContext context);
     }
 }
