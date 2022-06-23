@@ -29,10 +29,5 @@ namespace Сonfectionery.Infrastructure.Processing.Outbox
                 Payload = payload
             };
         }
-
-        public void RefreshProcessedDate()
-        {
-            ProcessedAt = DateTime.UtcNow;
-        }
     }
 }

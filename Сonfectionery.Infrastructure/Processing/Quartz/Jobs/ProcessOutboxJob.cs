@@ -1,30 +1,41 @@
-﻿using System.Linq;
+﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using MediatR;
 using Newtonsoft.Json;
+using Dapper;
 using Quartz;
 using Сonfectionery.Domain.Seedwork;
+using Сonfectionery.Infrastructure.Processing.Outbox;
+using Сonfectionery.Infrastructure.Processing.SqlConnection.Interfaces;
 
 namespace Сonfectionery.Infrastructure.Processing.Quartz.Jobs
 {
     [DisallowConcurrentExecution]
     public class ProcessOutboxJob : IJob
     {
-        private readonly СonfectioneryContext _context;
+        private readonly ISqlConnectionFactory _sqlConnectionFactory;
         private readonly IMediator _mediator;
 
         public ProcessOutboxJob(
-            СonfectioneryContext context,
+            ISqlConnectionFactory sqlConnectionFactory,
             IMediator mediator)
         {
-            _context = context;
+            _sqlConnectionFactory = sqlConnectionFactory;
             _mediator = mediator;
         }
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var messages = _context.OutboxMessages.Where(x => x.ProcessedAt == null).ToList();
+            using var connection = _sqlConnectionFactory.GetOpenConnection();
+            const string sql = "SELECT " +
+                               "[OutboxMessage].[Id], " +
+                               "[OutboxMessage].[Type], " +
+                               "[OutboxMessage].[Payload] " +
+                               "FROM [OutboxMessage]" +
+                               "WHERE [OutboxMessage].[ProcessedAt] IS NULL";
+
+            var messages = await connection.QueryAsync<OutboxMessageDto>(sql);
 
             foreach (var message in messages)
             {
@@ -33,9 +44,15 @@ namespace Сonfectionery.Infrastructure.Processing.Quartz.Jobs
 
                 await _mediator.Publish((INotification)notification);
 
-                message.RefreshProcessedDate();
+                const string sqlInsert = "UPDATE [OutboxMessage] " +
+                                         "SET [ProcessedAt] = @Date " +
+                                         "WHERE [Id] = @Id";
 
-                await _context.CommitAsync();
+                await connection.ExecuteAsync(sqlInsert, new
+                {
+                    Date = DateTime.UtcNow,
+                    message.Id
+                });
             }
         }
     }

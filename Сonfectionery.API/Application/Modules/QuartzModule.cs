@@ -9,7 +9,9 @@ namespace Сonfectionery.API.Application.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+            var infrastructureAssembly = Assembly.Load("Сonfectionery.Infrastructure");
+
+            builder.RegisterAssemblyTypes(infrastructureAssembly)
                 .Where(x => typeof(IJob).IsAssignableFrom(x)).InstancePerDependency();
         }
     }
