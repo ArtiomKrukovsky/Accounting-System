@@ -30,7 +30,11 @@ namespace Сonfectionery.API.Application.EventHandlers.DomainNotificationHandler
             const string piesTopic = KafkaConstants.PiesTopic;
             const string pieKey = KafkaConstants.PieKey;
 
-            await _kafkaService.ProduceAsync(piesTopic, pieKey, notification.Pie);
+            var pie = notification.Pie;
+
+            pie.ClearDomainEvents();
+
+            await _kafkaService.ProduceAsync(piesTopic, pieKey, pie);
         }
     }
 }

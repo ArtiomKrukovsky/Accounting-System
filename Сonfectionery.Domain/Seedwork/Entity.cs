@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Сonfectionery.Domain.Seedwork
 {
+    [JsonObject]
     public abstract class Entity
     {
         int? _requestedHashCode;
 
+        [JsonProperty]
         public virtual Guid Id { get; protected set; }
 
         public bool IsTransient()

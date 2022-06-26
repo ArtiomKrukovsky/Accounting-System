@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -14,19 +13,14 @@ using Сonfectionery.Domain.Aggregates.PieAggregate;
 
 namespace Сonfectionery.API.Application.Commands
 {
-    [DataContract]
     public class CreatePieCommand : ICommand<bool>
     {
-        [DataMember]
         public string Name { get; set; }
 
-        [DataMember]
         public string Description { get; set; }
 
-        [DataMember]
         public PortionsDto Portions { get; set; }
 
-        [DataMember]
         public IEnumerable<IngredientDto> Ingredients { get; set; }
 
         public CreatePieCommand(string name, string description, PortionsDto portions,
@@ -81,7 +75,7 @@ namespace Сonfectionery.API.Application.Commands
             _logger.LogInformation("----- Creating Pie - Pie: {@Name}", request.Name);
 
             var portions = _mapper.Map<Portions>(request.Portions);
-            var pie = Pie.Create(request.Name, request.Description, portions);
+            var pie = new Pie(request.Name, request.Description, portions);
 
             var ingredients = _mapper.Map<IEnumerable<Ingredient>>(request.Ingredients);
             pie.UpdateIngredients(ingredients);

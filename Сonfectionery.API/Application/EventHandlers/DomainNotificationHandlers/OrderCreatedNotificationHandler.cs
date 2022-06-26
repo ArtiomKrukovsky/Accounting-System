@@ -16,7 +16,7 @@ namespace Сonfectionery.API.Application.EventHandlers.DomainNotificationHandler
         private readonly ILogger<OrderCreatedNotificationHandler> _logger;
 
         public OrderCreatedNotificationHandler(
-            IKafkaService<Order> kafkaService, 
+            IKafkaService<Order> kafkaService,
             ILogger<OrderCreatedNotificationHandler> logger)
         {
             _kafkaService = kafkaService ?? throw new ArgumentNullException(nameof(kafkaService));
@@ -30,7 +30,12 @@ namespace Сonfectionery.API.Application.EventHandlers.DomainNotificationHandler
             const string ordersTopic = KafkaConstants.OrdersTopic;
             const string orderKey = KafkaConstants.OrderKey;
 
-            await _kafkaService.ProduceAsync(ordersTopic, orderKey, notification.Order);
+            var order = notification.Order;
+
+            order.RefreshStatus();
+            order.ClearDomainEvents();
+
+            await _kafkaService.ProduceAsync(ordersTopic, orderKey, order);
         }
     }
 }

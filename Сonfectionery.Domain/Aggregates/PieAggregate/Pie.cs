@@ -1,17 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using Сonfectionery.Domain.Events.DomainEvents;
 using Сonfectionery.Domain.Seedwork;
 
 namespace Сonfectionery.Domain.Aggregates.PieAggregate
 {
+    [JsonObject]
     public class Pie : Entity, IAggregateRoot
     {
+        [JsonProperty]
         public string Name { get; private set; }
+        [JsonProperty]
         public string Description { get; private set; }
 
+        [JsonProperty]
         public Portions Portions { get; private set; }
 
+        [JsonProperty]
         private readonly List<Ingredient> _ingredients;
         public IReadOnlyCollection<Ingredient> Ingredients => _ingredients;
 
@@ -20,7 +27,7 @@ namespace Сonfectionery.Domain.Aggregates.PieAggregate
             _ingredients = new List<Ingredient>();
         }
 
-        public static Pie Create(string name, string description, Portions portions)
+        public Pie(string name, string description, Portions portions) : this()
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -37,13 +44,12 @@ namespace Сonfectionery.Domain.Aggregates.PieAggregate
                 throw new ArgumentNullException(nameof(portions));
             }
 
-            return new Pie
-            {
-                Id = Guid.NewGuid(),
-                Name = name,
-                Description = description,
-                Portions = portions
-            };
+            Id = Guid.NewGuid();
+            Name = name;
+            Description = description;
+            Portions = portions;
+
+            AddDomainEvent(new PieCreatedEvent(this));
         }
 
         public void UpdateIngredients(IEnumerable<Ingredient> ingredients)

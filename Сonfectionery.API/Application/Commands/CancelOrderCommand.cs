@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -10,10 +9,8 @@ using Сonfectionery.Domain.Aggregates.OrderAggregate;
 
 namespace Сonfectionery.API.Application.Commands
 {
-    [DataContract]
     public class CancelOrderCommand : ICommand<bool>
     {
-        [DataMember]
         public Guid Id { get; set; }
 
         public CancelOrderCommand(Guid id)
@@ -55,7 +52,6 @@ namespace Сonfectionery.API.Application.Commands
             _logger.LogInformation("----- Cancelling Order - Order: {@Order}", existingOrder.Title);
 
             existingOrder.SetCancelledStatus();
-            existingOrder.RefreshStatus();
 
             _logger.LogInformation("----- Updating Order in the SQL DB - Order: {@Order}", existingOrder.Title);
 

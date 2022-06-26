@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -13,13 +12,10 @@ using Сonfectionery.Domain.Aggregates.OrderAggregate;
 
 namespace Сonfectionery.API.Application.Commands
 {
-    [DataContract]
     public class CreateOrderCommand : ICommand<bool>
     {
-        [DataMember]
         public string Title { get; set; }
 
-        [DataMember]
         public IEnumerable<OrderItemDto> OrderItems { get; set; }
 
         public CreateOrderCommand(string title, IEnumerable<OrderItemDto> orderItems)
@@ -60,14 +56,12 @@ namespace Сonfectionery.API.Application.Commands
         {
             _logger.LogInformation("----- Creating Order - Order: {@Title}", request.Title);
 
-            var order = Order.Create(request.Title);
+            var order = new Order(request.Title);
 
             foreach (var orderItem in request.OrderItems)
             {
                 order.AddOrderItem(orderItem.PieId, orderItem.UnitPrice, orderItem.Discount, orderItem.Units);
             }
-
-            order.RefreshStatus();
 
             _logger.LogInformation("----- Posting Order in the SQL DB - Order: {@Order}", order);
 

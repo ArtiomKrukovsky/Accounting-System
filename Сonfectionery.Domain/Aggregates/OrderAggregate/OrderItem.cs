@@ -1,22 +1,28 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Сonfectionery.Domain.Seedwork;
 
 namespace Сonfectionery.Domain.Aggregates.OrderAggregate
 {
+    [JsonObject]
     public class OrderItem : Entity
     {
+        [JsonProperty]
         public Guid PieId { get; private set; }
+        [JsonProperty]
         public Guid OrderId { get; private set; }
 
+        [JsonProperty]
         public decimal UnitPrice { get; private set; }
+        [JsonProperty]
         public decimal Discount { get; private set; }
+        [JsonProperty]
         public int Units { get; private set; }
 
         public decimal TotalPrice => Units * UnitPrice;
 
         private OrderItem()
         {
-
         }
 
         public static OrderItem Create(Guid pieId, decimal unitPrice, decimal discount, int units = 1)

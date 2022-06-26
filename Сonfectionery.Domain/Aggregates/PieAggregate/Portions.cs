@@ -1,10 +1,14 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Сonfectionery.Domain.Aggregates.PieAggregate
 {
+    [JsonObject]
     public record Portions
     {
+        [JsonProperty]
         public int Minimum { get; private set; }
+        [JsonProperty]
         public int Maximum { get; private set; }
 
         public Portions(int minimum, int maximum)

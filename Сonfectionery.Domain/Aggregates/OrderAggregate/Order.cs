@@ -1,19 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Сonfectionery.Domain.Events.DomainEvents;
 using Сonfectionery.Domain.Seedwork;
 
 namespace Сonfectionery.Domain.Aggregates.OrderAggregate
 {
+    [JsonObject]
     public class Order : Entity, IAggregateRoot
     {
+        [JsonProperty]
         public string Title { get; private set; }
+        [JsonProperty]
         public DateTime OrderDate { get; private set; }
 
+        [JsonProperty]
         private int _orderStatusId;
         public OrderStatus OrderStatus { get; private set; }
 
+        [JsonProperty]
         private readonly List<OrderItem> _orderItems;
         public IReadOnlyCollection<OrderItem> OrderItems => _orderItems;
 
@@ -22,14 +28,18 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
             _orderItems = new List<OrderItem>();
         }
 
-        public static Order Create(string title)
+        public Order(string title) : this()
         {
-            return new Order
+            if (string.IsNullOrEmpty(title))
             {
-                Title = title,
-                _orderStatusId = OrderStatus.Submitted.Id,
-                OrderDate = DateTime.UtcNow
-            };
+                throw new ArgumentNullException(nameof(title));
+            }
+
+            Title = title;
+            _orderStatusId = OrderStatus.Submitted.Id;
+            OrderDate = DateTime.UtcNow;
+
+            AddDomainEvent(new OrderCreatedEvent(this));
         }
 
         public void AddOrderItem(Guid pieId, decimal unitPrice, decimal discount, int units)
@@ -57,6 +67,8 @@ namespace Сonfectionery.Domain.Aggregates.OrderAggregate
             }
 
             _orderStatusId = OrderStatus.Cancelled.Id;
+
+            AddDomainEvent(new OrderCancelledEvent(this));
         }
 
         public void RefreshStatus()
