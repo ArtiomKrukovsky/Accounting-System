@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Reflection;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Mapster;
-using MapsterMapper;
-using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -12,11 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Сonfectionery.API.Application.Behaviors;
 using Сonfectionery.API.Extensions;
-using Сonfectionery.Infrastructure;
-using Сonfectionery.Services;
-using Сonfectionery.Services.Configurations;
 
 namespace Сonfectionery.API
 {
@@ -37,49 +27,11 @@ namespace Сonfectionery.API
             // Configure DB
             services.AddCustomDbContext(Configuration);
 
-            // Get KSqlDB configuration
-            var kSqlDbConfig = new KSqlDbConfig();
-            Configuration.Bind(KSqlDbConfig.KSqlDbConfiguration, kSqlDbConfig);
-
-            // Configure KSqlDB
-            services.AddKSqlDb(p =>
-            {
-                p.BaseUrl = kSqlDbConfig.BaseUrl;
-                p.Subscription = kSqlDbConfig.Subscription;
-                p.ShouldPluralizeFromItemName = kSqlDbConfig.ShouldPluralizeFromItemName;
-            });
-
-            // Get Kafka configuration
-            var kafkaConfig = new KafkaConfig();
-            Configuration.Bind(KafkaConfig.KafkaConfiguration, kafkaConfig);
-
-            // Configure Kafka
-            services.AddKafkaProducer(p =>
-            {
-                p.Topic = kafkaConfig.Topic;
-                p.BootstrapServers = kafkaConfig.BootstrapServers;
-            });
-
-            // Configure Mapster
-            var config = new TypeAdapterConfig { RequireExplicitMapping = true };
-            config.Scan(Assembly.GetExecutingAssembly());
-            config.Compile(); // validate mappings
-            services.AddSingleton(config);
-            services.AddScoped<IMapper, ServiceMapper>();
-
-            // Configure MediatR
-            services.AddMediatR(Assembly.GetExecutingAssembly());
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
-
-            // Configure Repositories
-            services.AddRepositories();
-
-            // Configure Domain Events
-            services.AddDomainEvents();
+            // Configure Quartz
+            services.StartQuartz(Configuration);
 
             // Configure Autofac
-            return services.CreateAutofacServiceProvider();
+            return services.CreateAutofacServiceProvider(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
